@@ -6,11 +6,8 @@ import { Button } from "@/components/ui/button";
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden gradient-hero text-primary-foreground">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-15"
-        style={{ backgroundImage: "url('/Gerda.jpg')" }}
-      />
+      {/* Background Pattern - Musical notes decorative */}
+      <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-accent/20 via-transparent to-primary/20" />
       
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
