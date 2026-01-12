@@ -14,15 +14,17 @@
  * Compétences CEREDIS ciblées : 1.1, 2.1, 5.1, 5.2
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CheckCircle2, XCircle, HelpCircle, Send, Lightbulb } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { QuestionQCM } from '@/types/seance';
 import { cn } from '@/lib/utils';
+import { useActivityTracking } from '@/hooks/useActivityTracking';
+import type { CeredisMetadata } from '@/types/ceredis';
+import type { NiveauCECRL } from '@/services/integration-unified/types.unified';
 
 export interface QuestionQCMJustifie extends QuestionQCM {
   /** Prompt pour guider la justification */
@@ -32,10 +34,33 @@ export interface QuestionQCMJustifie extends QuestionQCM {
 }
 
 interface QuizQCMJustifieProps {
+  /** Questions du quiz avec justification */
   questions: QuestionQCMJustifie[];
-  onComplete: (score: number, justification: string) => void;
-  /** Titre optionnel pour le quiz */
+  
+  /** Metadata CEREDIS pour le tracking */
+  metadata: {
+    activityId: string;
+    activityName: string;
+    chansonId: string;
+    seanceId: string;
+    ceredis: CeredisMetadata;
+    niveau: NiveauCECRL;
+  };
+  
+  /** ID de l'utilisateur */
+  userId: string;
+  
+  /** Nom de l'utilisateur */
+  userName: string;
+  
+  /** Callback appelé à la fin avec score et justifications */
+  onComplete: (score: number) => void;
+  
+  /** Titre optionnel */
   titre?: string;
+  
+  /** Mode debug */
+  debug?: boolean;
 }
 
 interface QuestionState {
@@ -45,7 +70,15 @@ interface QuestionState {
   justification: string;
 }
 
-export function QuizQCMJustifie({ questions, onComplete, titre }: QuizQCMJustifieProps) {
+export function QuizQCMJustifie({ 
+  questions, 
+  metadata,
+  userId,
+  userName,
+  onComplete,
+  titre,
+  debug = false
+}: QuizQCMJustifieProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [questionStates, setQuestionStates] = useState<Record<string, QuestionState>>(() => {
     const initial: Record<string, QuestionState> = {};
@@ -55,13 +88,22 @@ export function QuizQCMJustifie({ questions, onComplete, titre }: QuizQCMJustifi
     return initial;
   });
   const [showExplication, setShowExplication] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const startTimeRef = useRef<number>(Date.now());
+
+  const { trackActivity, isTracking } = useActivityTracking({
+    userId,
+    userName,
+    debug,
+  });
 
   const question = questions[currentQuestion];
   const state = questionStates[question.id];
   const isLastQuestion = currentQuestion === questions.length - 1;
-
   const minJustificationLength = question.justificationMinLength || 30;
+
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
 
   const handleSelectOption = (optionIndex: number) => {
     if (state?.answered) return;
@@ -91,48 +133,67 @@ export function QuizQCMJustifie({ questions, onComplete, titre }: QuizQCMJustifi
   };
 
   const isJustificationValid = () => {
-    return state.justification.trim().length >= minJustificationLength;
+    return state?.justification && state.justification.trim().length >= minJustificationLength;
   };
 
-  const handleNext = () => {
-    if (!isJustificationValid()) return;
-    
+  const handleNext = async () => {
     setShowExplication(false);
     
     if (isLastQuestion) {
-      calculateAndSubmit();
+      // Calculer le score
+      const correctAnswers = Object.values(questionStates).filter(s => s.isCorrect).length;
+      const totalQuestions = questions.length;
+      const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
+      const scoreRaw = correctAnswers;
+      const maxScore = metadata.ceredis.scoreMax;
+      const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
+
+      // Compiler toutes les justifications
+      const allJustifications = questions.map(q => ({
+        question: q.question,
+        selected: q.options[questionStates[q.id].selectedOption || 0],
+        correct: questionStates[q.id].isCorrect,
+        justification: questionStates[q.id].justification,
+      }));
+
+      const justificationsText = allJustifications
+        .map((j, i) => `Q${i + 1}: ${j.justification}`)
+        .join('\n\n');
+
+      if (debug) {
+        console.log('[QuizQCMJustifie] 🎯 Fin du quiz:', {
+          correctAnswers,
+          totalQuestions,
+          scorePercentage,
+          justificationsLength: justificationsText.length,
+        });
+      }
+
+      // Tracker avec les justifications (important pour Domaine 5)
+      await trackActivity({
+        activityId: metadata.activityId,
+        activityName: metadata.activityName,
+        activityType: 'qcm_justifie',
+        score: scoreRaw,
+        maxScore: maxScore,
+        ceredis: metadata.ceredis,
+        chansonId: metadata.chansonId,
+        seanceId: metadata.seanceId,
+        niveau: metadata.niveau,
+        duration,
+        response: justificationsText, // Justifications pour Domaine 5
+        metadata: {
+          correctAnswers,
+          totalQuestions,
+          scorePercentage,
+          justifications: allJustifications,
+        },
+      });
+
+      onComplete(scorePercentage);
     } else {
       setCurrentQuestion(prev => prev + 1);
     }
-  };
-
-  const calculateAndSubmit = () => {
-    setIsSubmitting(true);
-    
-    // Calculer le score QCM (50% du score total)
-    const correctAnswers = Object.values(questionStates).filter(s => s.isCorrect).length;
-    const qcmScore = (correctAnswers / questions.length) * 50;
-    
-    // Calculer le score justification (50% du score total)
-    // Basé sur la longueur moyenne des justifications
-    const totalJustificationLength = Object.values(questionStates)
-      .reduce((sum, s) => sum + s.justification.trim().length, 0);
-    const avgLength = totalJustificationLength / questions.length;
-    
-    let justificationScore = 0;
-    if (avgLength >= 100) justificationScore = 50;
-    else if (avgLength >= 60) justificationScore = 40;
-    else if (avgLength >= minJustificationLength) justificationScore = 30;
-    else justificationScore = 20;
-    
-    const totalScore = Math.round(qcmScore + justificationScore);
-    
-    // Concaténer toutes les justifications pour la preuve CaSS
-    const allJustifications = Object.entries(questionStates)
-      .map(([id, s], i) => `Q${i + 1}: ${s.justification}`)
-      .join('\n\n');
-    
-    onComplete(totalScore, allJustifications);
   };
 
   const getOptionStyle = (index: number) => {
@@ -166,22 +227,12 @@ export function QuizQCMJustifie({ questions, onComplete, titre }: QuizQCMJustifi
   };
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-display flex items-center gap-2">
-            <HelpCircle className="h-5 w-5 text-blue-600" />
-            {titre || 'QCM avec justification'}
-          </CardTitle>
-          <Badge variant="outline" className="text-xs">
-            Compétences 5.1, 5.2
-          </Badge>
-        </div>
-        <p className="text-sm text-muted-foreground mt-1">
-          Répondez aux questions puis justifiez votre choix pour valider vos compétences métalinguistiques
-        </p>
-      </CardHeader>
-
+    <Card>
+      {titre && (
+        <CardHeader>
+          <CardTitle>{titre}</CardTitle>
+        </CardHeader>
+      )}
       <CardContent className="p-6">
         {/* Progress */}
         <div className="flex items-center justify-between text-sm text-muted-foreground mb-6">
@@ -220,10 +271,10 @@ export function QuizQCMJustifie({ questions, onComplete, titre }: QuizQCMJustifi
             >
               <div className="flex items-center gap-3">
                 <div className={cn(
-                  "flex items-center justify-center h-8 w-8 rounded-full border-2",
-                  state?.answered && index === question.reponseCorrecte && "border-green-500 bg-green-100",
-                  state?.answered && index === state.selectedOption && !state.isCorrect && "border-red-500 bg-red-100",
-                  !state?.answered && "border-muted-foreground"
+                  "flex items-center justify-center h-8 w-8 rounded-full border-2 font-medium text-sm",
+                  state?.answered && index === question.reponseCorrecte && "border-green-500 bg-green-500 text-white",
+                  state?.answered && index === state.selectedOption && !state.isCorrect && "border-red-500 bg-red-500 text-white",
+                  !state?.answered && "border-current"
                 )}>
                   {String.fromCharCode(65 + index)}
                 </div>
@@ -237,15 +288,18 @@ export function QuizQCMJustifie({ questions, onComplete, titre }: QuizQCMJustifi
         {/* Explication et Justification */}
         {showExplication && (
           <div className="space-y-4 mt-6 pt-6 border-t">
-            {/* Explication de la bonne réponse */}
+            {/* Explication */}
             {question.explication && (
               <div className={cn(
                 "p-4 rounded-lg border",
                 state.isCorrect ? "bg-green-50 border-green-200" : "bg-amber-50 border-amber-200"
               )}>
                 <h4 className="font-medium flex items-center gap-2 mb-2">
-                  <Lightbulb className="h-4 w-4" />
-                  Explication
+                  <Lightbulb className={cn(
+                    "h-4 w-4",
+                    state.isCorrect ? "text-green-600" : "text-amber-600"
+                  )} />
+                  {state.isCorrect ? 'Bonne réponse !' : 'Explication'}
                 </h4>
                 <p className="text-sm">{question.explication}</p>
               </div>
@@ -281,10 +335,12 @@ export function QuizQCMJustifie({ questions, onComplete, titre }: QuizQCMJustifi
             <div className="flex justify-end pt-4">
               <Button
                 onClick={handleNext}
-                disabled={!isJustificationValid() || isSubmitting}
+                disabled={!isJustificationValid() || isTracking}
                 className="gradient-accent gap-2"
               >
-                {isLastQuestion ? (
+                {isTracking ? (
+                  'Enregistrement...'
+                ) : isLastQuestion ? (
                   <>
                     <Send className="h-4 w-4" />
                     Terminer le quiz

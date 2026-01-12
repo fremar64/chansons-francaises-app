@@ -1,16 +1,39 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { CheckCircle2, HelpCircle, Lightbulb } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TexteATrousData } from '@/types/seance';
 import { cn } from '@/lib/utils';
+import { useActivityTracking } from '@/hooks/useActivityTracking';
+import type { CeredisMetadata } from '@/types/ceredis';
+import type { NiveauCECRL } from '@/services/integration-unified/types.unified';
 
 interface TexteATrousProps {
   exercice: TexteATrousData;
+  
+  /** Metadata CEREDIS pour le tracking */
+  metadata: {
+    activityId: string;
+    activityName: string;
+    chansonId: string;
+    seanceId: string;
+    ceredis: CeredisMetadata;
+    niveau: NiveauCECRL;
+  };
+  
+  /** ID utilisateur */
+  userId: string;
+  
+  /** Nom utilisateur */
+  userName: string;
+  
   onComplete: (score: number) => void;
+  
+  /** Mode debug */
+  debug?: boolean;
 }
 
 interface TrouState {
@@ -19,7 +42,28 @@ interface TrouState {
   verifie: boolean;
 }
 
-export function TexteATrous({ exercice, onComplete }: TexteATrousProps) {
+export function TexteATrous({ 
+  exercice, 
+  metadata,
+  userId,
+  userName,
+  onComplete,
+  debug = false
+}: TexteATrousProps) {
+  // Timer pour tracking
+  const startTimeRef = useRef<number>(Date.now());
+  
+  // Hook de tracking
+  const { trackActivity, isTracking } = useActivityTracking({
+    userId,
+    userName,
+    debug,
+  });
+
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
+
   // Parser le texte pour extraire les trous
   const segments = useMemo(() => {
     const regex = /\{\{([^}]+)\}\}/g;
@@ -95,7 +139,7 @@ export function TexteATrous({ exercice, onComplete }: TexteATrousProps) {
       .toLowerCase()
       .trim()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, ''); // Retire les accents pour la comparaison
+      .replace(/[\u0300-\u036f]/g, ''); // Retire les accents
   };
 
   const verifierReponses = () => {
@@ -103,7 +147,6 @@ export function TexteATrous({ exercice, onComplete }: TexteATrousProps) {
     
     exercice.motsCaches.forEach((motCorrect, index) => {
       const reponse = trous[index]?.valeur || '';
-      // Comparaison flexible (ignore accents et casse)
       const estCorrect = normalizeString(reponse) === normalizeString(motCorrect);
       nouveauxTrous[index] = {
         ...nouveauxTrous[index],
@@ -124,23 +167,48 @@ export function TexteATrous({ exercice, onComplete }: TexteATrousProps) {
   const tousCorrects = Object.values(trous).every(t => t.estCorrect);
   const allFilled = Object.values(trous).every(t => t.valeur.trim() !== '');
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isVerified) {
       verifierReponses();
     } else {
-      onComplete(calculerScore());
+      // Calcul et tracking
+      const correctes = Object.values(trous).filter(t => t.estCorrect).length;
+      const scorePercentage = calculerScore();
+      const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
+
+      if (debug) {
+        console.log('[TexteATrous] 📝', { correctes, nombreTrous, scorePercentage, duration });
+      }
+
+      await trackActivity({
+        activityId: metadata.activityId,
+        activityName: metadata.activityName,
+        activityType: 'texte_a_trous',
+        score: correctes,
+        maxScore: metadata.ceredis.scoreMax,
+        ceredis: metadata.ceredis,
+        chansonId: metadata.chansonId,
+        seanceId: metadata.seanceId,
+        niveau: metadata.niveau,
+        duration,
+        metadata: {
+          totalTrous: nombreTrous,
+          correctes,
+          scorePercentage,
+        },
+      });
+
+      onComplete(scorePercentage);
     }
   };
 
   return (
     <Card>
       <CardContent className="p-6">
-        {/* Consigne */}
         <p className="text-muted-foreground mb-6">
           Complétez les trous avec les mots manquants. Cliquez sur 💡 pour obtenir un indice.
         </p>
 
-        {/* Texte avec trous */}
         <div className="bg-muted/30 rounded-lg p-6 mb-6">
           <div className="text-lg leading-relaxed whitespace-pre-wrap">
             {segments.map((segment, i) => {
@@ -185,7 +253,6 @@ export function TexteATrous({ exercice, onComplete }: TexteATrousProps) {
           </div>
         </div>
 
-        {/* Indices affichés */}
         {showIndices.size > 0 && exercice.indicesOptionnels && (
           <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
             <div className="flex items-start gap-2">
@@ -204,7 +271,6 @@ export function TexteATrous({ exercice, onComplete }: TexteATrousProps) {
           </div>
         )}
 
-        {/* Résultat après vérification */}
         {isVerified && (
           <div className={cn(
             "mb-6 p-4 rounded-lg border",
@@ -242,7 +308,6 @@ export function TexteATrous({ exercice, onComplete }: TexteATrousProps) {
           </div>
         )}
 
-        {/* Actions */}
         <div className="flex justify-end gap-3">
           {!isVerified && (
             <Button
@@ -254,8 +319,12 @@ export function TexteATrous({ exercice, onComplete }: TexteATrousProps) {
             </Button>
           )}
           {isVerified && (
-            <Button onClick={() => onComplete(calculerScore())} className="gradient-accent">
-              Continuer
+            <Button 
+              onClick={handleSubmit}
+              disabled={isTracking}
+              className="gradient-accent"
+            >
+              {isTracking ? 'Enregistrement...' : 'Continuer'}
             </Button>
           )}
         </div>

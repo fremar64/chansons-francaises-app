@@ -1,298 +1,288 @@
 'use client';
 
-/**
- * Composant JournalReflexif
- * Permet la verbalisation des stratégies de compréhension (métacognition)
- * 
- * Compétence CEREDIS ciblée :
- * - 5.6 : Verbaliser ses stratégies de compréhension
- * 
- * Ce composant implémente l'activité A4 du MAPPING OPÉRATIONNEL FINAL :
- * "Qu'est-ce que l'analyse du conditionnel t'a permis de mieux comprendre ?"
- */
-
-import { useState } from 'react';
-import { BookOpen, Send, Brain, Lightbulb, CheckCircle2, Star } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { BookOpen, Send, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
+import { useActivityTracking } from '@/hooks/useActivityTracking';
+import type { CeredisMetadata } from '@/types/ceredis';
+import type { NiveauCECRL } from '@/services/integration-unified/types.unified';
 
 export interface JournalReflexifData {
   id: string;
-  titre: string;
   questionPrincipale: string;
+  contexte?: string;
   sousQuestions?: string[];
-  echelleDifficulte?: boolean; // Demander à l'apprenant d'évaluer la difficulté
-  promptsReflexion?: string[];
+  nombreMotsMin?: number;
+  exemplesReponses?: string[];
 }
 
 interface JournalReflexifProps {
   exercice: JournalReflexifData;
+  
+  /** Metadata CEREDIS pour le tracking */
+  metadata: {
+    activityId: string;
+    activityName: string;
+    chansonId: string;
+    seanceId: string;
+    ceredis: CeredisMetadata;
+    niveau: NiveauCECRL;
+  };
+  
+  /** ID utilisateur */
+  userId: string;
+  
+  /** Nom utilisateur */
+  userName: string;
+  
   onComplete: (score: number) => void;
+  
+  /** Mode debug */
+  debug?: boolean;
 }
 
-interface ReflexionState {
-  reponseTexte: string;
-  difficultePercue: number | null; // 1-5
-  strategiesUtilisees: string[];
-}
-
-export function JournalReflexif({ exercice, onComplete }: JournalReflexifProps) {
-  const [reflexion, setReflexion] = useState<ReflexionState>({
-    reponseTexte: '',
-    difficultePercue: null,
-    strategiesUtilisees: []
+export function JournalReflexif({ 
+  exercice, 
+  metadata,
+  userId,
+  userName,
+  onComplete,
+  debug = false
+}: JournalReflexifProps) {
+  // Timer pour tracking
+  const startTimeRef = useRef<number>(Date.now());
+  
+  // Hook de tracking
+  const { trackActivity, isTracking } = useActivityTracking({
+    userId,
+    userName,
+    debug,
   });
+
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
+
+  // État pour la réflexion principale
+  const [reflexion, setReflexion] = useState('');
+  
+  // État pour les sous-questions
+  const [reponses, setReponses] = useState<Record<string, string>>({});
+  
+  // État de soumission
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showPrompts, setShowPrompts] = useState(false);
 
-  const strategiesPredefines = [
-    'Relire plusieurs fois le passage',
-    'Chercher le sens des mots inconnus',
-    'Faire des liens avec mes connaissances',
-    'Visualiser la scène mentalement',
-    'Me poser des questions sur le texte',
-    'Identifier la structure du texte',
-    'Repérer les connecteurs logiques',
-    'Analyser les temps verbaux'
-  ];
+  const nombreMotsMin = exercice.nombreMotsMin || 50;
 
-  const toggleStrategie = (strategie: string) => {
-    setReflexion(prev => ({
+  // Compter les mots
+  const wordCount = reflexion.trim().split(/\s+/).filter(word => word.length > 0).length;
+  const isValidLength = wordCount >= nombreMotsMin;
+
+  const handleSousQuestionChange = (index: number, value: string) => {
+    setReponses(prev => ({
       ...prev,
-      strategiesUtilisees: prev.strategiesUtilisees.includes(strategie)
-        ? prev.strategiesUtilisees.filter(s => s !== strategie)
-        : [...prev.strategiesUtilisees, strategie]
+      [`q${index}`]: value
     }));
   };
 
-  const isValidReflexion = () => {
-    return reflexion.reponseTexte.trim().length >= 30; // Au moins 30 caractères
-  };
+  const handleSubmit = async () => {
+    // Compiler toutes les réponses dans une réflexion complète
+    const reflexionComplete = `
+QUESTION PRINCIPALE: ${exercice.questionPrincipale}
 
-  const calculateScore = (): number => {
-    let score = 0;
-    
-    // Score basé sur la longueur de la réflexion (max 40 points)
-    const textLength = reflexion.reponseTexte.trim().length;
-    if (textLength >= 200) score += 40;
-    else if (textLength >= 100) score += 30;
-    else if (textLength >= 50) score += 20;
-    else score += 10;
-    
-    // Score basé sur les stratégies identifiées (max 30 points)
-    const strategiesCount = reflexion.strategiesUtilisees.length;
-    score += Math.min(strategiesCount * 10, 30);
-    
-    // Score basé sur l'auto-évaluation (max 30 points)
-    if (reflexion.difficultePercue !== null) {
-      score += 30;
+RÉFLEXION:
+${reflexion}
+
+${exercice.sousQuestions ? exercice.sousQuestions.map((q, i) => `
+SOUS-QUESTION ${i + 1}: ${q}
+RÉPONSE: ${reponses[`q${i}`] || 'Non répondue'}
+`).join('\n') : ''}
+    `.trim();
+
+    // Pour un journal réflexif, on donne le score max par défaut
+    // (évaluation qualitative par l'enseignant ensuite)
+    const score = metadata.ceredis.scoreMax;
+    const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
+    const totalWordCount = reflexionComplete.split(/\s+/).length;
+
+    if (debug) {
+      console.log('[JournalReflexif] 📔', {
+        score,
+        wordCount: totalWordCount,
+        duration,
+        reflexionLength: reflexionComplete.length
+      });
     }
-    
-    return score;
+
+    setIsSubmitted(true);
+
+    // CRITIQUE : Envoyer la réflexion complète dans response
+    // C'est ce qui permet de valider le Domaine 5 (P4 - métacognition)
+    await trackActivity({
+      activityId: metadata.activityId,
+      activityName: metadata.activityName,
+      activityType: 'journal_reflexif',
+      score: score,
+      maxScore: score,
+      ceredis: metadata.ceredis,
+      chansonId: metadata.chansonId,
+      seanceId: metadata.seanceId,
+      niveau: metadata.niveau,
+      duration,
+      response: reflexionComplete, // IMPORTANT : Réflexion métacognitive complète
+      metadata: {
+        wordCount: totalWordCount,
+        reflexionLength: reflexionComplete.length,
+        sousQuestionsCount: exercice.sousQuestions?.length || 0,
+      },
+    });
+
+    onComplete(score);
   };
 
-  const handleSubmit = () => {
-    if (isValidReflexion()) {
-      setIsSubmitted(true);
-      const score = calculateScore();
-      onComplete(score);
-    }
+  const getProgressColor = () => {
+    if (wordCount < nombreMotsMin) return 'text-amber-600';
+    return 'text-green-600';
   };
 
-  const getDifficultyLabel = (level: number): string => {
-    const labels: Record<number, string> = {
-      1: 'Très facile',
-      2: 'Facile',
-      3: 'Moyen',
-      4: 'Difficile',
-      5: 'Très difficile'
-    };
-    return labels[level] || '';
+  const getProgressPercentage = () => {
+    return Math.min((wordCount / nombreMotsMin) * 100, 100);
   };
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border-b">
-        <CardTitle className="text-lg font-display flex items-center gap-2">
-          <Brain className="h-5 w-5 text-purple-600" />
-          {exercice.titre || 'Journal réflexif'}
-        </CardTitle>
-        <p className="text-sm text-muted-foreground mt-1">
-          Prenez un moment pour réfléchir à votre apprentissage
-        </p>
+    <Card>
+      <CardHeader className="bg-primary/5 border-b">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-display flex items-center gap-2">
+            <BookOpen className="h-5 w-5" />
+            Journal réflexif
+          </CardTitle>
+          <Badge variant="outline" className={cn(getProgressColor())}>
+            {wordCount} mot{wordCount > 1 ? 's' : ''}
+          </Badge>
+        </div>
       </CardHeader>
 
       <CardContent className="p-6 space-y-6">
+        {/* Contexte */}
+        {exercice.contexte && (
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{exercice.contexte}</AlertDescription>
+          </Alert>
+        )}
+
         {/* Question principale */}
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-          <h3 className="font-semibold text-purple-900 flex items-center gap-2 mb-2">
-            <BookOpen className="h-5 w-5" />
-            Question de réflexion
-          </h3>
-          <p className="text-purple-800 leading-relaxed">
-            {exercice.questionPrincipale}
-          </p>
-        </div>
-
-        {/* Sous-questions optionnelles */}
-        {exercice.sousQuestions && exercice.sousQuestions.length > 0 && (
+        <div className="space-y-3">
           <div className="space-y-2">
-            <h4 className="text-sm font-medium text-muted-foreground">
-              Pour vous aider, pensez à :
-            </h4>
-            <ul className="text-sm text-muted-foreground space-y-1 ml-4 list-disc">
-              {exercice.sousQuestions.map((question, i) => (
-                <li key={i}>{question}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Bouton aide réflexion */}
-        {exercice.promptsReflexion && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowPrompts(!showPrompts)}
-            className="gap-2"
-          >
-            <Lightbulb className="h-4 w-4" />
-            {showPrompts ? 'Masquer les pistes' : 'Besoin d\'inspiration ?'}
-          </Button>
-        )}
-
-        {/* Prompts de réflexion */}
-        {showPrompts && exercice.promptsReflexion && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <h4 className="font-medium text-amber-900 mb-2">
-              Pistes de réflexion :
-            </h4>
-            <ul className="text-sm text-amber-800 space-y-1 ml-4 list-disc">
-              {exercice.promptsReflexion.map((prompt, i) => (
-                <li key={i}>{prompt}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {!isSubmitted ? (
-          <>
-            {/* Zone de texte pour la réflexion */}
-            <div className="space-y-2">
-              <Label htmlFor="reflexion" className="font-medium">
-                Votre réflexion :
-              </Label>
-              <Textarea
-                id="reflexion"
-                value={reflexion.reponseTexte}
-                onChange={(e) => setReflexion(prev => ({ ...prev, reponseTexte: e.target.value }))}
-                placeholder="Expliquez comment vous avez procédé pour comprendre le texte, ce qui vous a aidé, et ce que vous avez appris..."
-                className="min-h-[150px] resize-y"
-              />
-              <p className="text-xs text-muted-foreground">
-                Minimum 30 caractères • Actuellement : {reflexion.reponseTexte.length} caractères
-              </p>
-            </div>
-
-            {/* Sélection des stratégies utilisées */}
-            <div className="space-y-3">
-              <Label className="font-medium">
-                Quelles stratégies avez-vous utilisées ?
-              </Label>
-              <div className="flex flex-wrap gap-2">
-                {strategiesPredefines.map((strategie) => (
-                  <Badge
-                    key={strategie}
-                    variant={reflexion.strategiesUtilisees.includes(strategie) ? "default" : "outline"}
-                    className={cn(
-                      "cursor-pointer transition-all",
-                      reflexion.strategiesUtilisees.includes(strategie)
-                        ? "bg-purple-600 hover:bg-purple-700"
-                        : "hover:border-purple-400"
-                    )}
-                    onClick={() => toggleStrategie(strategie)}
-                  >
-                    {strategie}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            {/* Échelle de difficulté perçue */}
-            {exercice.echelleDifficulte !== false && (
-              <div className="space-y-3">
-                <Label className="font-medium">
-                  Comment avez-vous trouvé cette activité ?
-                </Label>
-                <RadioGroup
-                  value={reflexion.difficultePercue?.toString() || ''}
-                  onValueChange={(value) => setReflexion(prev => ({ 
-                    ...prev, 
-                    difficultePercue: parseInt(value) 
-                  }))}
-                  className="flex flex-wrap gap-4"
-                >
-                  {[1, 2, 3, 4, 5].map((level) => (
-                    <div key={level} className="flex items-center space-x-2">
-                      <RadioGroupItem value={level.toString()} id={`difficulty-${level}`} />
-                      <Label htmlFor={`difficulty-${level}`} className="flex items-center gap-1">
-                        {Array.from({ length: level }).map((_, i) => (
-                          <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                        ))}
-                        <span className="text-sm text-muted-foreground ml-1">
-                          {getDifficultyLabel(level)}
-                        </span>
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </div>
-            )}
-
-            {/* Bouton de soumission */}
-            <div className="flex justify-end pt-4">
-              <Button
-                onClick={handleSubmit}
-                disabled={!isValidReflexion()}
-                className="gradient-accent gap-2"
-              >
-                <Send className="h-4 w-4" />
-                Enregistrer ma réflexion
-              </Button>
-            </div>
-          </>
-        ) : (
-          /* Confirmation de soumission */
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-            <CheckCircle2 className="h-12 w-12 text-green-600 mx-auto mb-3" />
-            <h4 className="font-semibold text-green-900 mb-2">
-              Réflexion enregistrée !
-            </h4>
-            <p className="text-sm text-green-800 mb-4">
-              Votre journal réflexif a été sauvegardé. Cette démarche métacognitive 
-              vous aide à progresser dans votre apprentissage.
+            <h3 className="font-medium text-lg">{exercice.questionPrincipale}</h3>
+            <p className="text-sm text-muted-foreground">
+              Minimum {nombreMotsMin} mots
             </p>
-            
-            {/* Résumé */}
-            <div className="text-left bg-white rounded-lg p-4 mt-4 space-y-2">
-              <p className="text-sm">
-                <span className="font-medium">Stratégies identifiées :</span>{' '}
-                {reflexion.strategiesUtilisees.length > 0 
-                  ? reflexion.strategiesUtilisees.join(', ')
-                  : 'Aucune sélectionnée'}
-              </p>
-              {reflexion.difficultePercue && (
-                <p className="text-sm">
-                  <span className="font-medium">Difficulté perçue :</span>{' '}
-                  {getDifficultyLabel(reflexion.difficultePercue)}
-                </p>
+          </div>
+
+          <Textarea
+            value={reflexion}
+            onChange={(e) => setReflexion(e.target.value)}
+            placeholder="Partagez votre réflexion personnelle..."
+            className="min-h-[200px] resize-y"
+            disabled={isSubmitted}
+          />
+
+          {/* Barre de progression */}
+          <div className="space-y-2">
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <div 
+                className={cn(
+                  "h-full transition-all rounded-full",
+                  wordCount < nombreMotsMin ? "bg-amber-500" : "bg-green-500"
+                )}
+                style={{ width: `${Math.min(getProgressPercentage(), 100)}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span className={cn(getProgressColor(), "font-medium")}>
+                {wordCount} / {nombreMotsMin} mots minimum
+              </span>
+              {wordCount < nombreMotsMin && (
+                <span className="text-amber-600">
+                  Encore {nombreMotsMin - wordCount} mot{nombreMotsMin - wordCount > 1 ? 's' : ''}
+                </span>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Sous-questions */}
+        {exercice.sousQuestions && exercice.sousQuestions.length > 0 && (
+          <div className="space-y-4">
+            <h4 className="font-medium text-sm text-muted-foreground">
+              Questions complémentaires :
+            </h4>
+            {exercice.sousQuestions.map((question, index) => (
+              <div key={index} className="space-y-2">
+                <label className="text-sm font-medium">
+                  {index + 1}. {question}
+                </label>
+                <Textarea
+                  value={reponses[`q${index}`] || ''}
+                  onChange={(e) => handleSousQuestionChange(index, e.target.value)}
+                  placeholder="Votre réponse..."
+                  className="min-h-[100px]"
+                  disabled={isSubmitted}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Exemples de réponses */}
+        {exercice.exemplesReponses && exercice.exemplesReponses.length > 0 && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="font-medium text-blue-900 mb-2 text-sm">
+              💡 Pistes de réflexion :
+            </p>
+            <ul className="text-sm text-blue-800 space-y-1">
+              {exercice.exemplesReponses.map((exemple, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <span className="text-blue-600">•</span>
+                  <span>{exemple}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Message de confirmation */}
+        {isSubmitted && (
+          <Alert className="bg-green-50 border-green-200">
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              Votre réflexion a été enregistrée avec succès ! Merci pour votre participation.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Bouton de soumission */}
+        {!isSubmitted && (
+          <div className="flex justify-end">
+            <Button
+              onClick={handleSubmit}
+              disabled={!isValidLength || isTracking}
+              className="gradient-accent gap-2"
+            >
+              {isTracking ? 'Enregistrement...' : (
+                <>
+                  <Send className="h-4 w-4" />
+                  Soumettre ma réflexion
+                </>
+              )}
+            </Button>
           </div>
         )}
       </CardContent>

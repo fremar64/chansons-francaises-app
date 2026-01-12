@@ -1,15 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CheckCircle2, XCircle, HelpCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { QuestionQCM } from '@/types/seance';
 import { cn } from '@/lib/utils';
+import { useActivityTracking } from '@/hooks/useActivityTracking';
+import type { CeredisMetadata } from '@/types/ceredis';
+import type { NiveauCECRL } from '@/services/integration-unified/types.unified';
 
 interface QuizQCMProps {
+  /** Questions du QCM */
   questions: QuestionQCM[];
+  
+  /** Metadata CEREDIS pour le tracking */
+  metadata: {
+    activityId: string;
+    activityName: string;
+    chansonId: string;
+    seanceId: string;
+    ceredis: CeredisMetadata;
+    niveau: NiveauCECRL;
+  };
+  
+  /** ID de l'utilisateur */
+  userId: string;
+  
+  /** Nom de l'utilisateur */
+  userName: string;
+  
+  /** Callback appelé à la fin du quiz avec le score */
   onComplete: (score: number) => void;
+  
+  /** Mode debug (optionnel) */
+  debug?: boolean;
 }
 
 interface QuestionState {
@@ -18,14 +43,33 @@ interface QuestionState {
   isCorrect: boolean;
 }
 
-export function QuizQCM({ questions, onComplete }: QuizQCMProps) {
+export function QuizQCM({ 
+  questions, 
+  metadata,
+  userId,
+  userName,
+  onComplete,
+  debug = false
+}: QuizQCMProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [questionStates, setQuestionStates] = useState<Record<string, QuestionState>>({});
   const [showExplication, setShowExplication] = useState(false);
+  const startTimeRef = useRef<number>(Date.now());
+
+  const { trackActivity, isTracking } = useActivityTracking({
+    userId,
+    userName,
+    debug,
+  });
 
   const question = questions[currentQuestion];
   const state = questionStates[question.id];
   const isLastQuestion = currentQuestion === questions.length - 1;
+
+  // Réinitialiser le timer au montage
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
 
   const handleSelectOption = (optionIndex: number) => {
     if (state?.answered) return;
@@ -43,16 +87,53 @@ export function QuizQCM({ questions, onComplete }: QuizQCMProps) {
     setShowExplication(true);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setShowExplication(false);
     
     if (isLastQuestion) {
       // Calculer le score final
-      const correctAnswers = Object.values(questionStates).filter(s => s.isCorrect).length + 
-        (questionStates[question.id]?.isCorrect ? 0 : 0);
+      const correctAnswers = Object.values(questionStates).filter(s => s.isCorrect).length;
       const totalQuestions = questions.length;
-      const score = Math.round((correctAnswers / totalQuestions) * 100);
-      onComplete(score);
+      const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
+      const scoreRaw = correctAnswers;
+      const maxScore = metadata.ceredis.scoreMax;
+      
+      // Calculer la durée
+      const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
+
+      if (debug) {
+        console.log('[QuizQCM] 🎯 Fin du quiz:', {
+          correctAnswers,
+          totalQuestions,
+          scorePercentage,
+          scoreRaw,
+          maxScore,
+          duration,
+        });
+      }
+
+      // Tracker l'activité avec le service unifié
+      await trackActivity({
+        activityId: metadata.activityId,
+        activityName: metadata.activityName,
+        activityType: 'qcm',
+        score: scoreRaw,
+        maxScore: maxScore,
+        ceredis: metadata.ceredis,
+        chansonId: metadata.chansonId,
+        seanceId: metadata.seanceId,
+        niveau: metadata.niveau,
+        duration,
+        metadata: {
+          correctAnswers,
+          totalQuestions,
+          scorePercentage,
+          questionStates: Object.keys(questionStates).length,
+        },
+      });
+
+      // Appeler le callback parent avec le pourcentage
+      onComplete(scorePercentage);
     } else {
       setCurrentQuestion(prev => prev + 1);
     }
@@ -168,8 +249,17 @@ export function QuizQCM({ questions, onComplete }: QuizQCMProps) {
         {/* Actions */}
         {state?.answered && (
           <div className="mt-6 flex justify-end">
-            <Button onClick={handleNext} className="gradient-accent">
-              {isLastQuestion ? 'Voir mon score' : 'Question suivante'}
+            <Button 
+              onClick={handleNext} 
+              className="gradient-accent"
+              disabled={isTracking}
+            >
+              {isTracking 
+                ? 'Enregistrement...'
+                : isLastQuestion 
+                  ? 'Voir mon score' 
+                  : 'Question suivante'
+              }
             </Button>
           </div>
         )}
