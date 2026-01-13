@@ -287,6 +287,51 @@ export const getChanson = async (id: string): Promise<Chanson> => {
   return await pb.collection('chansons').getOne<Chanson>(id);
 };
 
+// Fonction utilitaire pour créer un slug à partir d'un titre
+export const createSlug = (titre: string): string => {
+  return titre
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Supprime les accents
+    .replace(/[^a-z0-9\s-]/g, '') // Supprime les caractères spéciaux
+    .replace(/\s+/g, '-') // Remplace les espaces par des tirets
+    .replace(/-+/g, '-') // Évite les tirets multiples
+    .trim();
+};
+
+// Fonction pour rechercher une chanson par son slug (titre normalisé)
+export const getChansonBySlug = async (slug: string): Promise<Chanson | null> => {
+  try {
+    // Mapper les slugs connus vers les titres exacts
+    const slugToTitleMap: Record<string, string> = {
+      'cest-ta-chance': "C'est ta chance",
+      'la-bas': 'Là-bas',
+      'le-coureur': 'Le coureur',
+      'ne-en-17': 'Né en 17 à Leidenstadt',
+      'ne-en-17-a-leidenstadt': 'Né en 17 à Leidenstadt',
+    };
+    
+    const titre = slugToTitleMap[slug];
+    
+    if (titre) {
+      // Recherche par titre exact
+      const result = await pb.collection('chansons').getFirstListItem<Chanson>(
+        `titre = "${titre}"`
+      );
+      return result;
+    }
+    
+    // Fallback : essayer de trouver par ID direct (pour compatibilité)
+    try {
+      return await pb.collection('chansons').getOne<Chanson>(slug);
+    } catch {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+};
+
 // Fonctions pour les séances
 export const getSeancesByChanson = async (chansonId: string): Promise<Seance[]> => {
   const result = await pb.collection('seances').getList<Seance>(1, 50, {

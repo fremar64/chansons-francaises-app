@@ -1,34 +1,42 @@
 # Journal de Développement - Chansons Françaises Next.js
 
-## 2026-01-14 - Correction "Chanson non trouvée" depuis l'accueil
+## 2026-01-14 - Connexion PocketBase + système de slugs
 
 ### Problème résolu ✅
 
-**Le bouton "Commencer le parcours" affichait "Chanson non trouvée"**
+**Le bouton "Commencer le parcours" affichait toujours "Chanson non trouvée"**
 
-### Cause
-Le hook `useChansons` chargeait uniquement depuis PocketBase (non configuré). Les IDs de parcours locaux (`cest-ta-chance`, `le-coureur`, `la-bas`) n'étaient pas reconnus.
+### Cause racine
+Les URLs utilisaient des slugs (`cest-ta-chance`, `la-bas`) mais PocketBase utilise des IDs auto-générés (`78iolh3qjm52pj7`, `pidmeza2iggecpc`).
 
 ### Solution
-1. **Ajout de données de fallback locales** dans `useChansons.ts` :
-   - Import des parcours locaux (`cestTaChanceParcours`, `leCoureurParcours`, `laBasParcours`)
-   - Création de `LOCAL_PARCOURS_DATA` avec les 3 chansons disponibles
-   - Fallback automatique vers ces données si PocketBase n'a pas de résultats
+1. **Système de slugs** dans `lib/pocketbase.ts` :
+   - Fonction `createSlug(titre)` pour normaliser les titres en slugs
+   - Fonction `getChansonBySlug(slug)` avec mapping slug → titre
+   - Mapping des slugs connus vers les titres exacts dans PocketBase
 
-2. **Création du fichier `index.ts` manquant** pour le parcours "la-bas"
+2. **Modification de `ChansonDisplay`** dans `hooks/useChansons.ts` :
+   - Ajout d'un champ `slug` dans le type
+   - Conversion PB → Display inclut maintenant le slug généré
+   - Données locales incluent le slug
 
-### Fichiers modifiés/créés
-- `hooks/useChansons.ts` - Ajout fallback données locales
-- `data/parcours/la-bas/index.ts` - Nouveau fichier créé
+3. **Recherche par slug** dans `app/chanson/[chansonId]/page.tsx` :
+   - `chansons.find(c => c.slug === chansonId || c.id === chansonId)`
+   - Compatible avec les URLs par slug ET par ID PocketBase
 
-### Fonctionnement
-- Essai de chargement depuis PocketBase
-- Si vide ou erreur → utilisation des données locales
-- Les filtres (niveau, recherche) s'appliquent aux données locales
+### Instance PocketBase
+- URL : `https://pocketbase-songs.ceredis.net`
+- Déjà configurée dans `lib/pocketbase.ts`
+- 3 chansons disponibles : "C'est ta chance", "Là-bas", "Né en 17 à Leidenstadt"
+
+### Fichiers modifiés
+- `lib/pocketbase.ts` - Ajout `createSlug()` et `getChansonBySlug()`
+- `hooks/useChansons.ts` - Ajout champ `slug` + import `createSlug`
+- `app/chanson/[chansonId]/page.tsx` - Recherche par slug ou ID
 
 ---
 
-## 2026-01-14 - Intégration lecteur audio dans activités de séance
+## 2026-01-14 - Correction "Chanson non trouvée" depuis l'accueil (v1)
 
 ### Fonctionnalité ajoutée ✅
 

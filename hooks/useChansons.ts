@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { pb, Chanson as PBChanson, getChansons } from '@/lib/pocketbase';
+import { pb, Chanson as PBChanson, getChansons, createSlug } from '@/lib/pocketbase';
 import { Chanson as MockChanson } from '@/data/mockSongs';
 
 // Import des données de parcours locaux
@@ -10,6 +10,7 @@ import laBasParcours from '@/data/parcours/la-bas';
 // Type unifié pour l'affichage (compatible avec les cartes existantes)
 export interface ChansonDisplay {
   id: string;
+  slug: string; // Slug pour les URLs (ex: "cest-ta-chance")
   titre: string;
   artiste: string;
   album?: string;
@@ -29,6 +30,7 @@ export interface ChansonDisplay {
 const LOCAL_PARCOURS_DATA: ChansonDisplay[] = [
   {
     id: 'cest-ta-chance',
+    slug: 'cest-ta-chance',
     titre: cestTaChanceParcours.meta.titre,
     artiste: cestTaChanceParcours.meta.artiste,
     album: cestTaChanceParcours.meta.album,
@@ -45,6 +47,7 @@ const LOCAL_PARCOURS_DATA: ChansonDisplay[] = [
   },
   {
     id: 'le-coureur',
+    slug: 'le-coureur',
     titre: leCoureurParcours.meta.titre,
     artiste: leCoureurParcours.meta.artiste,
     album: leCoureurParcours.meta.album || 'Non homologué',
@@ -61,6 +64,7 @@ const LOCAL_PARCOURS_DATA: ChansonDisplay[] = [
   },
   {
     id: 'la-bas',
+    slug: 'la-bas',
     titre: laBasParcours.meta.titre,
     artiste: laBasParcours.meta.artiste,
     album: laBasParcours.meta.album || 'Entre gris clair et gris foncé',
@@ -81,6 +85,7 @@ const LOCAL_PARCOURS_DATA: ChansonDisplay[] = [
 function convertPBToDisplay(chanson: PBChanson, seanceCount: number = 0): ChansonDisplay {
   return {
     id: chanson.id,
+    slug: createSlug(chanson.titre),
     titre: chanson.titre,
     artiste: chanson.artiste,
     album: chanson.album,

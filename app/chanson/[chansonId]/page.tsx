@@ -28,7 +28,8 @@ export default function ChansonDetailPage() {
   const chansonId = params?.chansonId;
   
   const { chansons, loading, error } = useChansons();
-  const chanson = chansons.find(c => c.id === chansonId);
+  // Rechercher par slug OU par id (pour compatibilité avec PocketBase et données locales)
+  const chanson = chansons.find(c => c.slug === chansonId || c.id === chansonId);
 
   if (loading) {
     return (
