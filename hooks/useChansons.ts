@@ -140,7 +140,11 @@ export function useChansons(options: UseChansonsOptions = {}): UseChansonsResult
       setLoading(true);
       setError(null);
 
-      // Essayer d'abord de charger depuis PocketBase
+      // Commencer avec les données locales
+      let allChansons: ChansonDisplay[] = [...LOCAL_PARCOURS_DATA];
+      const localSlugs = new Set(LOCAL_PARCOURS_DATA.map(c => c.slug));
+
+      // Essayer de charger depuis PocketBase et fusionner
       try {
         const result = await getChansons({
           niveau: options.niveau || undefined,
@@ -150,8 +154,8 @@ export function useChansons(options: UseChansonsOptions = {}): UseChansonsResult
         });
 
         if (result.items.length > 0) {
-          // Récupérer le nombre de séances pour chaque chanson
-          const chansonsWithSeances = await Promise.all(
+          // Récupérer le nombre de séances pour chaque chanson PocketBase
+          const pbChansons = await Promise.all(
             result.items.map(async (chanson) => {
               try {
                 const seances = await pb.collection('seances').getList(1, 1, {
@@ -163,30 +167,39 @@ export function useChansons(options: UseChansonsOptions = {}): UseChansonsResult
               }
             })
           );
-          setChansons(chansonsWithSeances);
-          return;
+
+          // Fusionner : remplacer les données locales par PocketBase si même slug
+          // et ajouter les chansons PocketBase qui n'existent pas localement
+          allChansons = LOCAL_PARCOURS_DATA.map(local => {
+            const pbVersion = pbChansons.find(pb => pb.slug === local.slug);
+            return pbVersion || local;
+          });
+
+          // Ajouter les chansons PocketBase qui n'existent pas dans les données locales
+          pbChansons.forEach(pb => {
+            if (!localSlugs.has(pb.slug)) {
+              allChansons.push(pb);
+            }
+          });
         }
       } catch (pbError) {
-        console.log('PocketBase non disponible, utilisation des données locales');
+        console.log('PocketBase non disponible, utilisation des données locales uniquement');
       }
-
-      // Fallback : utiliser les données locales des parcours
-      let localChansons = [...LOCAL_PARCOURS_DATA];
 
       // Appliquer les filtres si nécessaire
       if (options.niveau) {
-        localChansons = localChansons.filter(c => c.niveauCECRL === options.niveau);
+        allChansons = allChansons.filter(c => c.niveauCECRL === options.niveau);
       }
       if (options.search) {
         const searchLower = options.search.toLowerCase();
-        localChansons = localChansons.filter(c => 
+        allChansons = allChansons.filter(c => 
           c.titre.toLowerCase().includes(searchLower) ||
           c.artiste.toLowerCase().includes(searchLower) ||
           c.thematiques.some(t => t.toLowerCase().includes(searchLower))
         );
       }
 
-      setChansons(localChansons);
+      setChansons(allChansons);
     } catch (err) {
       console.error('Erreur lors du chargement des chansons:', err);
       setError(err instanceof Error ? err : new Error('Erreur inconnue'));
