@@ -30,6 +30,7 @@ const DOMAINES = [
 
 /**
  * Données de démonstration pour le développement
+ * Note: Utiliser des dates fixes pour éviter les problèmes d'hydratation SSR
  */
 const MOCK_HISTORIQUE: ActiviteHistorique[] = [
   {
@@ -40,7 +41,7 @@ const MOCK_HISTORIQUE: ActiviteHistorique[] = [
     seance: 'Séance 1 - Découverte',
     score: 85,
     duree: 180,
-    date: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 min ago
+    date: '2026-01-13T10:00:00.000Z',
     competences: ['1.1', '2.1'],
     feedback: 'succes'
   },
@@ -52,7 +53,7 @@ const MOCK_HISTORIQUE: ActiviteHistorique[] = [
     seance: 'Séance 2 - Analyse',
     score: 70,
     duree: 240,
-    date: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2h ago
+    date: '2026-01-13T08:00:00.000Z',
     competences: ['5.1', '5.3'],
     feedback: 'partiel'
   },
@@ -64,7 +65,7 @@ const MOCK_HISTORIQUE: ActiviteHistorique[] = [
     seance: 'Séance 3 - Réflexion',
     score: 90,
     duree: 300,
-    date: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+    date: '2026-01-12T14:00:00.000Z',
     competences: ['5.6'],
     feedback: 'succes'
   },
@@ -76,21 +77,28 @@ const MOCK_HISTORIQUE: ActiviteHistorique[] = [
     seance: 'Séance 1 - Expression',
     score: 75,
     duree: 420,
-    date: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
+    date: '2026-01-11T16:00:00.000Z',
     competences: ['3.1', '5.5', '5.7'],
     feedback: 'partiel'
   }
 ];
 
 /**
- * Créer des données de compétences simulées
+ * Créer des données de compétences simulées (déterministe pour SSR)
+ * Utilise l'index de la compétence pour générer des valeurs cohérentes
  */
 function createMockCompetenceDetails(): CompetenceDetail[] {
   const details: CompetenceDetail[] = [];
   
-  Object.entries(COMPETENCES_CEREDIS).forEach(([id, comp]) => {
-    // Générer un statut et score aléatoire pour la démo
-    const random = Math.random();
+  // Générateur pseudo-aléatoire déterministe basé sur seed
+  const seededRandom = (seed: number) => {
+    const x = Math.sin(seed * 9999) * 10000;
+    return x - Math.floor(x);
+  };
+  
+  Object.entries(COMPETENCES_CEREDIS).forEach(([id, comp], index) => {
+    // Utiliser l'index comme seed pour des valeurs déterministes
+    const random = seededRandom(index + 1);
     let statut: 'non_commence' | 'en_cours' | 'maitrise';
     let score: number;
     let preuves: number;
@@ -98,14 +106,14 @@ function createMockCompetenceDetails(): CompetenceDetail[] {
     
     if (random > 0.7) {
       statut = 'maitrise';
-      score = 75 + Math.floor(Math.random() * 25);
-      preuves = 2 + Math.floor(Math.random() * 3);
-      confidence = 0.8 + Math.random() * 0.2;
+      score = 75 + Math.floor(seededRandom(index + 10) * 25);
+      preuves = 2 + Math.floor(seededRandom(index + 20) * 3);
+      confidence = 0.8 + seededRandom(index + 30) * 0.2;
     } else if (random > 0.3) {
       statut = 'en_cours';
-      score = 40 + Math.floor(Math.random() * 35);
-      preuves = 1 + Math.floor(Math.random() * 2);
-      confidence = 0.4 + Math.random() * 0.4;
+      score = 40 + Math.floor(seededRandom(index + 40) * 35);
+      preuves = 1 + Math.floor(seededRandom(index + 50) * 2);
+      confidence = 0.4 + seededRandom(index + 60) * 0.4;
     } else {
       statut = 'non_commence';
       score = 0;
@@ -125,7 +133,7 @@ function createMockCompetenceDetails(): CompetenceDetail[] {
       preuves,
       confidence,
       derniereEvaluation: statut !== 'non_commence' 
-        ? new Date(Date.now() - Math.random() * 1000 * 60 * 60 * 24 * 7).toISOString()
+        ? '2026-01-10T12:00:00.000Z'
         : null
     });
   });

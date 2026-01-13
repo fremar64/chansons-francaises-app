@@ -1,5 +1,65 @@
 # Journal de Développement - Chansons Françaises Next.js
 
+## 2026-01-14 - Correction erreur d'hydratation SSR
+
+### Problème résolu
+Erreur "Hydration failed because the server rendered HTML didn't match the client"
+
+### Cause
+Les hooks `useDashboard.ts` et `useTeacherDashboard.ts` utilisaient `Math.random()` et `Date.now()` pour générer des données mock, produisant des valeurs différentes entre le serveur (SSR) et le client.
+
+### Solution
+1. Création d'un générateur pseudo-aléatoire déterministe `seededRandom(seed)`
+2. Remplacement de tous les `Math.random()` par `seededRandom(index)` avec un seed basé sur l'index
+3. Remplacement de tous les `Date.now()` par des dates fixes (`'2026-01-13T00:00:00.000Z'`)
+
+### Fichiers modifiés
+- `hooks/useDashboard.ts` - MOCK_HISTORIQUE avec dates fixes, createMockCompetenceDetails déterministe
+- `hooks/useTeacherDashboard.ts` - generateMockHistorique, generateMockEleves, generateMockProfilDomaines, generateMockCompetencesCritiques, generateMockPreuves, calculateMockStatistiques
+
+---
+
+## 2026-01-14 - Parcours "Le coureur" complet
+
+### Parcours créé ✅
+
+**"Le coureur" de Jean-Jacques Goldman** - Parcours complet CEREDIS :
+- **5 séances, 43 écrans** (~339 minutes, ~303 points max)
+- Thème : La mondialisation est-elle émancipation ou aliénation ?
+
+| Séance | Titre | Écrans | Focus |
+|--------|-------|--------|-------|
+| 1 | Découverte | 9 | 7 étapes chronologiques du déracinement, oppositions AVANT/APRÈS |
+| 2 | Vocabulaire | 8 | 4 champs lexicaux (nature, modernité, déshumanisation, mondialisation) |
+| 3 | Grammaire | 8 | Imparfait vs passé composé, voix passive |
+| 4 | Débat | 9 | Mondialisation : thèse/antithèse/synthèse, dimension post-coloniale |
+| 5 | Production | 9 | Récit de transformation ambivalente (450-500 mots) |
+
+### Fichiers créés
+- `data/parcours/le-coureur/Texte.txt` - Paroles complètes
+- `data/parcours/le-coureur/chanson.ts` - Métadonnées, vocabulaire clé, 7 étapes
+- `data/parcours/le-coureur/seance-1-decouverte.ts`
+- `data/parcours/le-coureur/seance-2-vocabulaire.ts`
+- `data/parcours/le-coureur/seance-3-grammaire.ts`
+- `data/parcours/le-coureur/seance-4-debat.ts`
+- `data/parcours/le-coureur/seance-5-production.ts`
+- `data/parcours/le-coureur/index.ts`
+
+### Métaphore centrale
+- **AVANT** : "Je la caressais naguère" (harmonie avec la terre)
+- **APRÈS** : "Des clous aux pieds pour écorcher la terre" (violence, aliénation)
+
+### Structure narrative (7 étapes)
+1. Vie d'origine (plage, alizés, ancêtres)
+2. Découverte (recruteur, chronomètre)
+3. Transaction (dollars, signature)
+4. Transplantation (avion, froid des villes)
+5. Déshumanisation (mesuré comme un cheval)
+6. Transformation (numéro, compétition)
+7. Bilan ambivalent (étranger partout, "C'est ainsi")
+
+---
+
 ## 2026-01-13 - Parcours "C'est ta chance" complet + Corrections TypeScript majeures
 
 ### Parcours créé ✅

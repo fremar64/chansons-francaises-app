@@ -33,20 +33,27 @@ const DOMAINES = [
 ];
 
 // ============================================================================
-// DONNÉES MOCK POUR DÉVELOPPEMENT
+// DONNÉES MOCK POUR DÉVELOPPEMENT (déterministes pour SSR)
 // ============================================================================
 
-function generateMockHistorique(): PointProgression[] {
+// Générateur pseudo-aléatoire déterministe basé sur seed
+const seededRandom = (seed: number) => {
+  const x = Math.sin(seed * 9999) * 10000;
+  return x - Math.floor(x);
+};
+
+function generateMockHistorique(seedOffset: number = 0): PointProgression[] {
   const points: PointProgression[] = [];
-  let score = 350 + Math.random() * 100;
+  let score = 350 + seededRandom(seedOffset) * 100;
   
   for (let i = 30; i >= 0; i--) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    score += (Math.random() - 0.4) * 15; // Tendance légèrement positive
+    // Utiliser des dates fixes basées sur une date de référence
+    const baseDate = new Date('2026-01-13T00:00:00.000Z');
+    baseDate.setDate(baseDate.getDate() - i);
+    score += (seededRandom(seedOffset + i + 100) - 0.4) * 15;
     score = Math.max(200, Math.min(550, score));
     points.push({
-      date: date.toISOString(),
+      date: baseDate.toISOString(),
       score: Math.round(score)
     });
   }
@@ -58,10 +65,14 @@ function generateMockEleves(): SyntheseEleve[] {
   const noms = ['Dupont', 'Martin', 'Bernard', 'Petit', 'Durand', 'Leroy', 'Moreau', 'Simon', 'Laurent', 'Michel'];
   
   return prenoms.map((prenom, i) => {
-    const scoreCEREDIS = 250 + Math.floor(Math.random() * 300);
+    const scoreCEREDIS = 250 + Math.floor(seededRandom(i * 10) * 300);
     const niveau = getNiveauFromScoreMock(scoreCEREDIS);
-    const historiqueScores = generateMockHistorique();
+    const historiqueScores = generateMockHistorique(i * 100);
     const tendanceValue = historiqueScores[historiqueScores.length - 1].score - historiqueScores[0].score;
+    
+    // Date fixe basée sur l'index
+    const baseDate = new Date('2026-01-13T00:00:00.000Z');
+    baseDate.setDate(baseDate.getDate() - Math.floor(seededRandom(i * 20) * 7));
     
     return {
       id: `eleve-${i + 1}`,
@@ -72,9 +83,9 @@ function generateMockEleves(): SyntheseEleve[] {
       zoneProgression: getZoneProgressionMock(scoreCEREDIS, niveau),
       tendance: tendanceValue > 10 ? 'hausse' : tendanceValue < -10 ? 'baisse' : 'stable',
       historiqueScores,
-      derniereActivite: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-      activitesCompletees: 10 + Math.floor(Math.random() * 30),
-      tempsTotal: 3600 + Math.floor(Math.random() * 18000)
+      derniereActivite: baseDate.toISOString(),
+      activitesCompletees: 10 + Math.floor(seededRandom(i * 30) * 30),
+      tempsTotal: 3600 + Math.floor(seededRandom(i * 40) * 18000)
     };
   });
 }
@@ -108,15 +119,15 @@ function getZoneProgressionMock(scoreCEREDIS: number, niveauCECRL: NiveauCECRL):
 }
 
 function generateMockProfilDomaines(): ProfilDomaineEleve[] {
-  return DOMAINES.map(domaine => ({
+  return DOMAINES.map((domaine, i) => ({
     domaineId: domaine.id,
     domaineName: domaine.name,
     abbrev: domaine.abbrev,
-    score: 40 + Math.floor(Math.random() * 50),
+    score: 40 + Math.floor(seededRandom(i * 5 + 200) * 50),
     scoreMax: 100,
     couleur: domaine.couleur,
-    niveauAtteint: ['A2', 'B1', 'B2'][Math.floor(Math.random() * 3)] as NiveauCECRL,
-    competencesMaitrisees: Math.floor(Math.random() * domaine.competencesIds.length),
+    niveauAtteint: ['A2', 'B1', 'B2'][Math.floor(seededRandom(i * 5 + 300) * 3)] as NiveauCECRL,
+    competencesMaitrisees: Math.floor(seededRandom(i * 5 + 400) * domaine.competencesIds.length),
     competencesTotal: domaine.competencesIds.length
   }));
 }
@@ -124,8 +135,8 @@ function generateMockProfilDomaines(): ProfilDomaineEleve[] {
 function generateMockCompetencesCritiques(): CompetenceCritique[] {
   const competences: CompetenceCritique[] = [];
   
-  Object.entries(COMPETENCES_CEREDIS).forEach(([id, comp]) => {
-    const score = Math.floor(Math.random() * 100);
+  Object.entries(COMPETENCES_CEREDIS).forEach(([id, comp], index) => {
+    const score = Math.floor(seededRandom(index * 7 + 500) * 100);
     const seuilRequis = 60;
     
     competences.push({
@@ -154,19 +165,27 @@ function generateMockPreuves(eleveId: string): PreuveDetail[] {
   };
   
   const preuves: PreuveDetail[] = [];
+  // Extraire un seed numérique depuis l'ID de l'élève
+  const eleveIndex = parseInt(eleveId.replace('eleve-', '')) || 1;
   
   for (let i = 0; i < 12; i++) {
-    const type = types[Math.floor(Math.random() * types.length)];
+    const seedBase = eleveIndex * 100 + i;
+    const type = types[Math.floor(seededRandom(seedBase + 600) * types.length)];
+    
+    // Date fixe basée sur l'index
+    const baseDate = new Date('2026-01-13T00:00:00.000Z');
+    baseDate.setDate(baseDate.getDate() - Math.floor(seededRandom(seedBase + 700) * 30));
+    
     preuves.push({
       id: `preuve-${eleveId}-${i}`,
       type,
       typeLabel: typeLabels[type],
-      score: 50 + Math.floor(Math.random() * 50),
-      date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-      competenceId: `${Math.floor(Math.random() * 5) + 1}.${Math.floor(Math.random() * 3) + 1}`,
-      chanson: ['Là-bas', 'Né en 17 à Leidenstadt', 'La Bohème'][Math.floor(Math.random() * 3)],
-      seance: `Séance ${Math.floor(Math.random() * 4) + 1}`,
-      statut: Math.random() > 0.2 ? 'valide' : 'en_attente'
+      score: 50 + Math.floor(seededRandom(seedBase + 800) * 50),
+      date: baseDate.toISOString(),
+      competenceId: `${Math.floor(seededRandom(seedBase + 900) * 5) + 1}.${Math.floor(seededRandom(seedBase + 1000) * 3) + 1}`,
+      chanson: ['Là-bas', 'Né en 17 à Leidenstadt', 'La Bohème'][Math.floor(seededRandom(seedBase + 1100) * 3)],
+      seance: `Séance ${Math.floor(seededRandom(seedBase + 1200) * 4) + 1}`,
+      statut: seededRandom(seedBase + 1300) > 0.2 ? 'valide' : 'en_attente'
     });
   }
   
@@ -201,15 +220,15 @@ function calculateMockStatistiques(eleves: SyntheseEleve[]): StatistiquesClasse 
     ecartType,
     mediane,
     repartitionNiveaux,
-    scoresMoyensDomaines: DOMAINES.map(d => ({
+    scoresMoyensDomaines: DOMAINES.map((d, i) => ({
       domaineId: d.id,
       domaineName: d.name,
       abbrev: d.abbrev,
-      scoreMoyen: 40 + Math.floor(Math.random() * 40)
+      scoreMoyen: 40 + Math.floor(seededRandom(i * 11 + 1400) * 40)
     })),
-    tauxCompetencesValidees: 45 + Math.floor(Math.random() * 30),
+    tauxCompetencesValidees: 45 + Math.floor(seededRandom(1500) * 30),
     verrousCommuns: generateMockCompetencesCritiques().filter(c => c.estVerrou).slice(0, 3),
-    progressionMoyenne: Math.round((Math.random() - 0.3) * 30)
+    progressionMoyenne: Math.round((seededRandom(1600) - 0.3) * 30)
   };
 }
 
