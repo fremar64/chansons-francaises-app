@@ -12,10 +12,10 @@
  */
 
 import { seance1 } from './seance-1-decouverte';
-import { seance2 } from './seance-2-vocabulaire-migre';
-import { seance3 } from './seance-3-grammaire-migre';
-import { seance4 } from './seance-4-debat-migre';
-import { seance5 } from './seance-5-production-migre';
+import { seance2 } from './seance-2-vocabulaire';
+import { seance3 } from './seance-3-grammaire';
+import { seance4 } from './seance-4-debat';
+import { seance5 } from './seance-5-production';
 
 import type { SeanceCeredis } from '@/types/ceredis';
 
