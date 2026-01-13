@@ -1,5 +1,33 @@
 # Journal de Développement - Chansons Françaises Next.js
 
+## 2026-01-14 - Correction "Chanson non trouvée" depuis l'accueil
+
+### Problème résolu ✅
+
+**Le bouton "Commencer le parcours" affichait "Chanson non trouvée"**
+
+### Cause
+Le hook `useChansons` chargeait uniquement depuis PocketBase (non configuré). Les IDs de parcours locaux (`cest-ta-chance`, `le-coureur`, `la-bas`) n'étaient pas reconnus.
+
+### Solution
+1. **Ajout de données de fallback locales** dans `useChansons.ts` :
+   - Import des parcours locaux (`cestTaChanceParcours`, `leCoureurParcours`, `laBasParcours`)
+   - Création de `LOCAL_PARCOURS_DATA` avec les 3 chansons disponibles
+   - Fallback automatique vers ces données si PocketBase n'a pas de résultats
+
+2. **Création du fichier `index.ts` manquant** pour le parcours "la-bas"
+
+### Fichiers modifiés/créés
+- `hooks/useChansons.ts` - Ajout fallback données locales
+- `data/parcours/la-bas/index.ts` - Nouveau fichier créé
+
+### Fonctionnement
+- Essai de chargement depuis PocketBase
+- Si vide ou erreur → utilisation des données locales
+- Les filtres (niveau, recherche) s'appliquent aux données locales
+
+---
+
 ## 2026-01-14 - Intégration lecteur audio dans activités de séance
 
 ### Fonctionnalité ajoutée ✅
