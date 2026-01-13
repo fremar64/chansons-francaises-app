@@ -305,7 +305,7 @@ export const chansonData: Omit<Chanson, 'id' | 'created' | 'updated'> = {
     texte: l.texte, 
     timestamp: l.temps 
   })),
-  audio_url: "/Répertoire des chansons/Jean-Jacques Goldman - C'est ta chance.mp3",
+  audio_url: "/audio/chansons/jean-jacques-goldman/cest-ta-chance.mp3",
   cover_url: undefined,
   video_url: undefined,
   vocabulaire_cle: Object.fromEntries(

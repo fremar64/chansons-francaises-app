@@ -5,8 +5,10 @@ export { OrdreElements } from './OrdreElements';
 export { EcranIntroduction } from './EcranIntroduction';
 export { TexteLibre } from './TexteLibre';
 export { JournalReflexif } from './JournalReflexif';
+export { EcouteChanson } from './EcouteChanson';
 
 // Types réexportés
 export type { TexteLibreData } from './TexteLibre';
 export type { JournalReflexifData } from './JournalReflexif';
 export type { QuestionQCMJustifie } from './QuizQCMJustifie';
+export type { EcouteChansonData } from './EcouteChanson';

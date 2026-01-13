@@ -1,5 +1,28 @@
 # Journal de Développement - Chansons Françaises Next.js
 
+## 2026-01-14 - Intégration lecteur audio dans activités de séance
+
+### Fonctionnalité ajoutée ✅
+
+**Activités d'écoute (`ecoute_decouverte` / `ecoute_ciblee`) fonctionnelles dans la page de séance**
+
+### Modifications
+- Ajout des types `ecoute_decouverte` et `ecoute_ciblee` dans le type `Activite`
+- Import du composant `EcouteChanson` depuis `@/components/activities`
+- Ajout des cas d'écoute dans le switch `renderActivity()` avec mapping des données
+- Ajout d'une activité d'écoute de démonstration au début des activités mock
+
+### Fichier modifié
+- `app/chanson/[chansonId]/seance/[seanceId]/page.tsx`
+
+### Fonctionnement
+- Les activités d'écoute sont affichées avec le composant `EcouteChanson`
+- L'audio se charge depuis `/audio/chansons/{artiste}/{chanson}.mp3`
+- Objectifs et éléments de focus sont affichés à l'utilisateur
+- La progression d'écoute est suivie avant de permettre la validation
+
+---
+
 ## 2026-01-14 - Correction erreur d'hydratation SSR
 
 ### Problème résolu

@@ -226,7 +226,7 @@ export const chansonData: Omit<Chanson, 'id' | 'created' | 'updated'> = {
     texte: l.texte, 
     timestamp: l.temps 
   })),
-  audio_url: "/Répertoire des chansons/Jean-Jacques Goldman, Sirima - Là-bas.mp3",
+  audio_url: "/audio/chansons/jean-jacques-goldman/la-bas.mp3",
   cover_url: undefined,
   video_url: undefined,
   vocabulaire_cle: Object.fromEntries(

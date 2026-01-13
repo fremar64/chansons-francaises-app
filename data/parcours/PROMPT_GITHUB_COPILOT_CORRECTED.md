@@ -1,7 +1,7 @@
 # 🎯 PROMPT GITHUB COPILOT - GÉNÉRATION PARCOURS GOLDMAN (VERSION CORRIGÉE)
 
 **Date** : 2026-01-13  
-**Objectif** : Générer 2 parcours complets (10 séances, 65 écrans) pour "C'est ta chance" et "Le coureur"
+**Objectif** : Générer 1 parcours complet (5 séances, 33 écrans) pour "C'est ta chance" 
 
 ---
 
@@ -15,7 +15,7 @@ Vous allez générer des parcours d'apprentissage du français basés sur des ch
 
 **Parcours à créer** :
 3. ⏳ "C'est ta chance" (5 séances, 33 écrans)
-4. ⏳ "Le coureur" (5 séances, 32 écrans)
+
 
 ---
 
@@ -423,8 +423,6 @@ const ecran1bis: EcranCeredis = {
 };
 ```
 
----
 
-[Le reste du document technique continue identique...]
 
 **FIN DE LA VERSION CORRIGÉE**

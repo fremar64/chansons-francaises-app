@@ -16,7 +16,7 @@ export const chansonData: Omit<Chanson, 'id' | 'created' | 'updated'> = {
   album: "Entre gris clair et gris foncé",
   annee: 1987,
   duree: 234, // 3:54
-  audio_url: "/Répertoire des chansons/Né en 17 à Leidenstadt.mp3",
+  audio_url: "/audio/chansons/jean-jacques-goldman/ne-en-17-a-leidenstadt.mp3",
   
   // Classification
   genre: ["chanson française", "pop"],

@@ -13,7 +13,8 @@ import {
   BookOpen,
   Trophy,
   Clock,
-  ChevronLeft
+  ChevronLeft,
+  Headphones
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,11 +23,12 @@ import { Progress } from '@/components/ui/progress';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useAuth } from '@/contexts/AuthContext';
+import { EcouteChanson, type EcouteChansonData } from '@/components/activities';
 
 // Types pour les activités
 interface Activite {
   id: string;
-  type: 'qcm' | 'qcm_justifie' | 'texte_a_trous' | 'ordre_elements' | 'texte_libre' | 'journal_reflexif';
+  type: 'qcm' | 'qcm_justifie' | 'texte_a_trous' | 'ordre_elements' | 'texte_libre' | 'journal_reflexif' | 'ecoute_decouverte' | 'ecoute_ciblee';
   consigne: string;
   contenu: Record<string, unknown>;
   points?: number;
@@ -262,6 +264,27 @@ const mockSeance: Seance = {
   duree: 45,
   activites: [
     {
+      id: 'act-0',
+      type: 'ecoute_decouverte',
+      consigne: 'Écoutez attentivement la chanson une première fois pour vous imprégner de son ambiance.',
+      contenu: {
+        audioUrl: '/audio/chansons/jean-jacques-goldman/la-bas.mp3',
+        titre: 'Là-bas',
+        artiste: 'Jean-Jacques Goldman',
+        objectifs: [
+          'Écouter la chanson dans son intégralité',
+          'Identifier l\'ambiance générale',
+          'Repérer des mots ou expressions familiers'
+        ],
+        questions: [
+          'De quoi parle cette chanson selon vous ?',
+          'Quelle émotion principale ressentez-vous ?',
+          'Avez-vous reconnu des mots ou expressions ?'
+        ]
+      },
+      points: 5
+    },
+    {
       id: 'act-1',
       type: 'qcm',
       consigne: 'De quoi parle principalement cette chanson ?',
@@ -353,6 +376,20 @@ export default function SeancePlayerPage() {
         return <TexteLibre activite={currentActivite} onComplete={handleActivityComplete} />;
       case 'journal_reflexif':
         return <JournalReflexif activite={currentActivite} onComplete={handleActivityComplete} />;
+      case 'ecoute_decouverte':
+      case 'ecoute_ciblee':
+        // Construire les données pour le composant EcouteChanson
+        const ecouteData: EcouteChansonData = {
+          id: currentActivite.id,
+          audioUrl: (currentActivite.contenu.audioUrl as string) || '/audio/chansons/jean-jacques-goldman/la-bas.mp3',
+          titre: (currentActivite.contenu.titre as string) || 'La-bas',
+          artiste: (currentActivite.contenu.artiste as string) || 'Jean-Jacques Goldman',
+          type: currentActivite.type,
+          consigne: currentActivite.consigne,
+          objectifs: (currentActivite.contenu.objectifs as string[]) || seance.objectifs,
+          focusElements: currentActivite.contenu.questions as string[] | undefined
+        };
+        return <EcouteChanson data={ecouteData} onComplete={() => handleActivityComplete(true, currentActivite.points || 5)} />;
       default:
         return <p>Type d&apos;activité non supporté</p>;
     }
