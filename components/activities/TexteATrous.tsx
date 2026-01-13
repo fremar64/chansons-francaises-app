@@ -226,7 +226,7 @@ export function TexteATrous({
                     <Input
                       value={trouState?.valeur || ''}
                       onChange={(e) => handleInputChange(index, e.target.value)}
-                      disabled={isVerified && trouState?.estCorrect}
+                      disabled={isVerified && (trouState?.estCorrect ?? false)}
                       className={cn(
                         "inline-block w-32 text-center font-medium",
                         trouState?.verifie && trouState?.estCorrect && "border-green-500 bg-green-50 text-green-900",

@@ -12,10 +12,16 @@
  * - Pensée critique sur l'aliénation sociale
  */
 
-import type { Chanson, LigneChanson } from '@/services/pocketbase';
+import type { Chanson } from '@/services/pocketbase';
+
+// Type local pour les paroles synchronisées
+interface LigneSynchronisee {
+  temps: number;
+  texte: string;
+}
 
 // Paroles synchronisées avec timestamps (en secondes)
-export const parolesSync: LigneChanson[] = [
+export const parolesSync: LigneSynchronisee[] = [
   // Introduction instrumentale
   { temps: 0, texte: "" },
   
@@ -205,7 +211,7 @@ export const chansonData: Omit<Chanson, 'id' | 'created' | 'updated'> = {
   duree: 165, // 2:45 en secondes
   genre: ["pop", "chanson française"],
   niveau: "B2",
-  type_texte: "narratif-argumentatif",
+  type_texte: "narratif_argumentatif",
   themes: [
     "quête existentielle",
     "aliénation sociale",
@@ -214,12 +220,19 @@ export const chansonData: Omit<Chanson, 'id' | 'created' | 'updated'> = {
     "liberté"
   ],
   paroles: parolesSync.map(l => l.texte).filter(Boolean).join('\n'),
-  paroles_synchronisees: parolesSync,
+  paroles_synchronisees: parolesSync.map((l, i) => ({ 
+    id: `lb-ligne-${i + 1}`, 
+    numero: i + 1, 
+    texte: l.texte, 
+    timestamp: l.temps 
+  })),
   audio_url: "/Répertoire des chansons/Jean-Jacques Goldman, Sirima - Là-bas.mp3",
-  cover_url: null,
-  video_url: null,
-  vocabulaire_cle: vocabulaireCle,
-  points_grammaire: pointsGrammaire,
+  cover_url: undefined,
+  video_url: undefined,
+  vocabulaire_cle: Object.fromEntries(
+    vocabulaireCle.map(v => [v.mot, `${v.definition}. Ex: "${v.exemple}"`])
+  ),
+  points_grammaire: pointsGrammaire.map(p => `${p.point}: ${p.explication}`),
   contexte_culturel: contexteCulturel,
   actif: true,
 };

@@ -12,22 +12,3 @@ export * from './teacher-dashboard';
 
 // Types CEREDIS unifiés (nouveaux)
 export * from './ceredis';
-
-// Réexports pratiques pour éviter les imports multiples
-export type {
-  // Types séances de base
-  Seance,
-  Ecran,
-  TypeEcran,
-  ActiviteData,
-  ProgressionSeance,
-  
-  // Types CEREDIS
-  EcranCeredis,
-  SeanceCeredis,
-  CeredisMetadata,
-  CompetencyId,
-  DomaineId,
-  EvidenceType,
-  NiveauCECRL
-} from './ceredis';

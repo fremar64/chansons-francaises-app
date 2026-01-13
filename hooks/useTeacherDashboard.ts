@@ -89,15 +89,15 @@ function getNiveauFromScoreMock(score: number): NiveauCECRL {
 }
 
 function getZoneProgressionMock(scoreCEREDIS: number, niveauCECRL: NiveauCECRL): string {
-  const seuilsBas: Record<NiveauCECRL, number> = {
-    'A1': 0, 'A2': 200, 'B1': 300, 'B2': 400, 'C1': 500, 'C2': 600
+  const seuilsBas: Partial<Record<NiveauCECRL, number>> = {
+    'A1': 0, 'A2': 200, 'A2+': 250, 'B1': 300, 'B1+': 350, 'B2': 400, 'B2+': 450, 'C1': 500, 'C1+': 550, 'C2': 600
   };
-  const seuilsHaut: Record<NiveauCECRL, number> = {
-    'A1': 199, 'A2': 299, 'B1': 399, 'B2': 499, 'C1': 599, 'C2': 600
+  const seuilsHaut: Partial<Record<NiveauCECRL, number>> = {
+    'A1': 199, 'A2': 299, 'A2+': 299, 'B1': 399, 'B1+': 399, 'B2': 499, 'B2+': 499, 'C1': 599, 'C1+': 599, 'C2': 600
   };
   
-  const bas = seuilsBas[niveauCECRL];
-  const haut = seuilsHaut[niveauCECRL];
+  const bas = seuilsBas[niveauCECRL] ?? 0;
+  const haut = seuilsHaut[niveauCECRL] ?? 600;
   const range = haut - bas;
   const position = scoreCEREDIS - bas;
   const ratio = position / range;
@@ -188,7 +188,11 @@ function calculateMockStatistiques(eleves: SyntheseEleve[]): StatistiquesClasse 
     : sorted[Math.floor(sorted.length / 2)];
   
   // Répartition par niveau
-  const repartitionNiveaux: Record<NiveauCECRL, number> = { 'A1': 0, 'A2': 0, 'B1': 0, 'B2': 0, 'C1': 0, 'C2': 0 };
+  const repartitionNiveaux: Record<NiveauCECRL, number> = { 
+    'A1': 0, 'A2': 0, 'A2+': 0, 
+    'B1': 0, 'B1+': 0, 'B2': 0, 'B2+': 0, 
+    'C1': 0, 'C1+': 0, 'C2': 0 
+  };
   eleves.forEach(e => { repartitionNiveaux[e.niveauCECRL]++; });
   
   return {

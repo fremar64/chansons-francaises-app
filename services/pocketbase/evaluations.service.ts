@@ -141,10 +141,10 @@ class EvaluationsCompetencesService {
     let totalScore = 0;
     let totalWeight = 0;
 
-    recent.forEach((eval, index) => {
+    recent.forEach((evaluation, index) => {
       // Le poids augmente avec la récence (1, 2, 3, ... 10)
       const weight = index + 1;
-      totalScore += eval.score * weight;
+      totalScore += evaluation.score * weight;
       totalWeight += weight;
     });
 

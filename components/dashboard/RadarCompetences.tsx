@@ -79,9 +79,9 @@ export function RadarCompetences({
       return {
         x: center + labelRadius * Math.cos(angle),
         y: center + labelRadius * Math.sin(angle),
-        anchor: Math.abs(Math.cos(angle)) < 0.1 
+        anchor: (Math.abs(Math.cos(angle)) < 0.1 
           ? 'middle' 
-          : Math.cos(angle) > 0 ? 'start' : 'end',
+          : Math.cos(angle) > 0 ? 'start' : 'end') as 'middle' | 'start' | 'end',
         ...item
       };
     });

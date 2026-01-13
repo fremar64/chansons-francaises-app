@@ -221,10 +221,14 @@ export const MAPPING_CEREDIS_CECRL: Record<string, NiveauCECRL> = {
 /** Fonction pour déterminer la zone de progression */
 export function getZoneProgression(scoreCEREDIS: number, niveauCECRL: NiveauCECRL): string {
   const seuilsBas: Record<NiveauCECRL, number> = {
-    'A1': 0, 'A2': 200, 'B1': 300, 'B2': 400, 'C1': 500, 'C2': 600
+    'A1': 0, 'A2': 200, 'A2+': 250, 
+    'B1': 300, 'B1+': 350, 'B2': 400, 'B2+': 450, 
+    'C1': 500, 'C1+': 550, 'C2': 600
   };
   const seuilsHaut: Record<NiveauCECRL, number> = {
-    'A1': 199, 'A2': 299, 'B1': 399, 'B2': 499, 'C1': 599, 'C2': 600
+    'A1': 199, 'A2': 299, 'A2+': 299, 
+    'B1': 399, 'B1+': 399, 'B2': 499, 'B2+': 499, 
+    'C1': 599, 'C1+': 599, 'C2': 600
   };
   
   const bas = seuilsBas[niveauCECRL];

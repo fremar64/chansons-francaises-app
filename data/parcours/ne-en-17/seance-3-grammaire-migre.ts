@@ -55,8 +55,7 @@ const ecran2: EcranCeredis = {
   audioFin: 240,
   activite: {
     type: 'ecoute_ciblee',
-    contenu: 'Focus sur les structures grammaticales au conditionnel passé',
-    objectifCible: 'Identifier les formes verbales au conditionnel passé'
+    contenu: 'Focus sur les structures grammaticales au conditionnel passé. Objectif : Identifier les formes verbales au conditionnel passé'
   },
   ceredis: createCeredisMetadata({
     competencies: ['1.2', '5.1'],

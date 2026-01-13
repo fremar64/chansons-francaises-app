@@ -37,6 +37,14 @@ export type {
   EvaluationCompetenceExpanded,
 } from './evaluations.service';
 
+// Imports pour l'objet pocketbaseServices
+import { chansonsService } from './chansons.service';
+import { seancesService } from './seances.service';
+import { progressionService } from './progression.service';
+import { reponsesService } from './reponses.service';
+import { competencesService } from './competences.service';
+import { evaluationsCompetencesService } from './evaluations.service';
+
 // Exporter tous les services dans un objet pour usage facile
 export const pocketbaseServices = {
   chansons: chansonsService,

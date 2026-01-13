@@ -30,30 +30,38 @@ interface SyntheseEleveProps {
 }
 
 // Configuration des couleurs par niveau CECRL
-const NIVEAU_CONFIG: Record<NiveauCECRL, { color: string; bgColor: string; borderColor: string }> = {
+const NIVEAU_CONFIG: Partial<Record<NiveauCECRL, { color: string; bgColor: string; borderColor: string }>> = {
   'A1': { color: 'text-emerald-700', bgColor: 'bg-emerald-100', borderColor: 'border-emerald-300' },
   'A2': { color: 'text-green-700', bgColor: 'bg-green-100', borderColor: 'border-green-300' },
+  'A2+': { color: 'text-green-700', bgColor: 'bg-green-100', borderColor: 'border-green-300' },
   'B1': { color: 'text-blue-700', bgColor: 'bg-blue-100', borderColor: 'border-blue-300' },
+  'B1+': { color: 'text-blue-700', bgColor: 'bg-blue-100', borderColor: 'border-blue-300' },
   'B2': { color: 'text-indigo-700', bgColor: 'bg-indigo-100', borderColor: 'border-indigo-300' },
+  'B2+': { color: 'text-indigo-700', bgColor: 'bg-indigo-100', borderColor: 'border-indigo-300' },
   'C1': { color: 'text-purple-700', bgColor: 'bg-purple-100', borderColor: 'border-purple-300' },
+  'C1+': { color: 'text-purple-700', bgColor: 'bg-purple-100', borderColor: 'border-purple-300' },
   'C2': { color: 'text-violet-700', bgColor: 'bg-violet-100', borderColor: 'border-violet-300' }
 };
 
 // Composant Jauge CECRL
 function JaugeCECRL({ niveau, score }: { niveau: NiveauCECRL; score: number }) {
-  const config = NIVEAU_CONFIG[niveau];
+  const config = NIVEAU_CONFIG[niveau] || NIVEAU_CONFIG['B1'];
   
   // Calcul du pourcentage vers le niveau suivant
-  const seuilsBas: Record<NiveauCECRL, number> = {
-    'A1': 0, 'A2': 200, 'B1': 300, 'B2': 400, 'C1': 500, 'C2': 600
+  const seuilsBas: Partial<Record<NiveauCECRL, number>> = {
+    'A1': 0, 'A2': 200, 'A2+': 250, 'B1': 300, 'B1+': 350, 'B2': 400, 'B2+': 450, 'C1': 500, 'C1+': 550, 'C2': 600
   };
-  const seuilsHaut: Record<NiveauCECRL, number> = {
-    'A1': 199, 'A2': 299, 'B1': 399, 'B2': 499, 'C1': 599, 'C2': 600
+  const seuilsHaut: Partial<Record<NiveauCECRL, number>> = {
+    'A1': 199, 'A2': 299, 'A2+': 299, 'B1': 399, 'B1+': 399, 'B2': 499, 'B2+': 499, 'C1': 599, 'C1+': 599, 'C2': 600
   };
   
-  const bas = seuilsBas[niveau];
-  const haut = seuilsHaut[niveau];
+  const bas = seuilsBas[niveau] ?? 0;
+  const haut = seuilsHaut[niveau] ?? 600;
   const progressNiveau = Math.round(((score - bas) / (haut - bas)) * 100);
+
+  if (!config) {
+    return <div className="text-center text-muted-foreground">Niveau inconnu</div>;
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -157,7 +165,11 @@ function formatDuree(seconds: number): string {
 }
 
 export function SyntheseEleve({ eleve, compact = false }: SyntheseEleveProps) {
-  const niveauConfig = NIVEAU_CONFIG[eleve.niveauCECRL];
+  const niveauConfig = NIVEAU_CONFIG[eleve.niveauCECRL] || NIVEAU_CONFIG['B1'];
+
+  if (!niveauConfig) {
+    return <div className="text-muted-foreground">Configuration de niveau manquante</div>;
+  }
 
   if (compact) {
     return (

@@ -228,6 +228,7 @@ export function mapTypeEcranToActivityType(typeEcran: TypeEcran): string {
   const mapping: Record<TypeEcran, string> = {
     'introduction': 'introduction',
     'ecoute_decouverte': 'ecoute_decouverte',
+    'ecoute_ciblee': 'ecoute_guidee',
     'ecoute_guidee': 'ecoute_guidee',
     'comprehension': 'comprehension',
     'quiz_qcm': 'qcm',

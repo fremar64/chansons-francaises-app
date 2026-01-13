@@ -3,6 +3,7 @@
 export type TypeEcran =
   | 'introduction'
   | 'ecoute_decouverte'
+  | 'ecoute_ciblee'
   | 'ecoute_guidee'
   | 'comprehension'
   | 'quiz_qcm'
@@ -88,11 +89,14 @@ export interface TexteLibreData {
 
 export interface JournalReflexifData {
   id: string;
-  titre: string;
+  titre?: string;
   questionPrincipale: string;
+  contexte?: string;
   sousQuestions?: string[];
   echelleDifficulte?: boolean;
   promptsReflexion?: string[];
+  nombreMotsMin?: number;
+  exemplesReponses?: string[];
 }
 
 // Union type pour toutes les données d'activités
@@ -105,7 +109,7 @@ export type ActiviteData =
   | { type: 'production_ecrite'; exercice: ProductionEcriteData }
   | { type: 'texte_libre'; exercice: TexteLibreData }
   | { type: 'journal_reflexif'; exercice: JournalReflexifData }
-  | { type: 'introduction' | 'ecoute_decouverte' | 'ecoute_guidee' | 'bilan'; contenu: string };
+  | { type: 'introduction' | 'ecoute_decouverte' | 'ecoute_ciblee' | 'ecoute_guidee' | 'bilan'; contenu: string };
 
 // Structure d'un écran de séance
 export interface Ecran {

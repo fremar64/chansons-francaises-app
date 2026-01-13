@@ -11,7 +11,7 @@ export interface Chanson extends BaseModel {
   duree: number; // en secondes
   genre: string[]; // ['pop', 'rock', etc.]
   niveau: 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
-  type_texte: 'narratif' | 'descriptif' | 'argumentatif' | 'poetique' | 'reflexif_interrogatif' | 'argumentatif_injonctif';
+  type_texte: 'narratif' | 'descriptif' | 'argumentatif' | 'poetique' | 'reflexif_interrogatif' | 'argumentatif_injonctif' | 'narratif_argumentatif';
   themes: string[];
   paroles: string; // HTML Editor content
   paroles_synchronisees?: LigneChanson[];

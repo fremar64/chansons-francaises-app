@@ -21,7 +21,10 @@ export enum CeredisDomaineId {
 /**
  * Niveaux CECRL
  */
-export type NiveauCECRL = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+export type NiveauCECRL = 
+  | 'A1' | 'A2' | 'A2+' 
+  | 'B1' | 'B1+' | 'B2' | 'B2+'
+  | 'C1' | 'C1+' | 'C2';
 
 /**
  * Compétence du référentiel CEREDIS
@@ -297,6 +300,7 @@ export const MAPPING_ACTIVITES_COMPETENCES: Record<string, string[]> = {
 export interface CassAssertion {
   '@context': string;
   '@type': 'ceasn:Assertion';
+  '@id'?: string;
   competency: string;
   subject: string;
   evidence: string;

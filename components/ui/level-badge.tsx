@@ -3,23 +3,27 @@
 import { cn } from "@/lib/utils";
 
 interface LevelBadgeProps {
-  level: 'A2' | 'B1' | 'B2' | 'C1';
+  level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 const levelColors = {
+  A1: "bg-green-400 text-white",
   A2: "bg-level-a2 text-white",
   B1: "bg-level-b1 text-white",
   B2: "bg-level-b2 text-accent-foreground",
   C1: "bg-level-c1 text-white",
+  C2: "bg-purple-700 text-white",
 };
 
 const levelDescriptions = {
+  A1: "Découverte",
   A2: "Élémentaire",
   B1: "Intermédiaire",
   B2: "Intermédiaire avancé",
   C1: "Avancé",
+  C2: "Maîtrise",
 };
 
 const sizeClasses = {

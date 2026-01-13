@@ -44,7 +44,7 @@ const ecran2: EcranCeredis = {
   id: 'ne17-s2-e2',
   numero: 2,
   titre: 'Écoute ciblée - Repérage lexical',
-  type: 'ecoute_cibl ee',
+  type: 'ecoute_ciblee',
   consigne: 'Écoutez et repérez les mots liés à la souffrance',
   dureeEstimee: 6,
   audioDebut: 0,
@@ -191,7 +191,7 @@ const ecran5: EcranCeredis = {
     type: 'ordre_elements',
     exercice: {
       id: 'oe1',
-      consigne: 'Ordonnez ces mots du champ lexical de la souffrance par intensité croissante',
+      consigne: 'Ordonnez ces mots du champ lexical de la souffrance par intensité croissante (Pensez à l\'échelle d\'intensité émotionnelle et au degré de gravité)',
       elements: [
         { id: 'e1', texte: 'Tristesse', ordre: 1 },
         { id: 'e2', texte: 'Souffrance', ordre: 2 },
@@ -199,8 +199,7 @@ const ecran5: EcranCeredis = {
         { id: 'e4', texte: 'Tragédie', ordre: 4 },
         { id: 'e5', texte: 'Horreur', ordre: 5 },
         { id: 'e6', texte: 'Apocalypse', ordre: 6 }
-      ],
-      aide: 'Pensez à l\'échelle d\'intensité émotionnelle et au degré de gravité'
+      ]
     }
   },
   ceredis: createCeredisMetadata({

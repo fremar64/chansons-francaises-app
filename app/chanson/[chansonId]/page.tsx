@@ -27,10 +27,10 @@ export default function ChansonDetailPage() {
   const params = useParams<{ chansonId: string }>();
   const chansonId = params?.chansonId;
   
-  const { chansons, isLoading, error } = useChansons();
+  const { chansons, loading, error } = useChansons();
   const chanson = chansons.find(c => c.id === chansonId);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -89,9 +89,9 @@ export default function ChansonDetailPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <Badge 
-                  className={`absolute top-3 left-3 ${levelColors[chanson.niveau] || 'bg-gray-500'}`}
+                  className={`absolute top-3 left-3 ${levelColors[chanson.niveauCECRL] || 'bg-gray-500'}`}
                 >
-                  {chanson.niveau}
+                  {chanson.niveauCECRL}
                 </Badge>
               </div>
 
@@ -103,7 +103,7 @@ export default function ChansonDetailPage() {
                 <p className="text-xl text-muted-foreground mb-4">{chanson.artiste}</p>
                 
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {chanson.themes?.map((theme: string) => (
+                  {chanson.thematiques?.map((theme: string) => (
                     <Badge key={theme} variant="secondary">
                       {theme}
                     </Badge>
@@ -147,7 +147,6 @@ export default function ChansonDetailPage() {
               <CardContent>
                 <AudioPlayer 
                   src={chanson.audioUrl}
-                  showLyrics
                 />
                 {!chanson.audioUrl && (
                   <p className="text-sm text-muted-foreground text-center py-4">
@@ -166,7 +165,7 @@ export default function ChansonDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <SeancesList chansonId={chansonId || ''} />
+                <SeancesList chansonId={chansonId || ''} seances={[]} />
               </CardContent>
             </Card>
           </div>
@@ -183,7 +182,7 @@ export default function ChansonDetailPage() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {chanson.competences?.map((comp: string, index: number) => (
+                  {chanson.competencesCibles?.map((comp: string, index: number) => (
                     <li key={index} className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 mt-0.5 text-accent flex-shrink-0" />
                       <span className="text-sm">{comp}</span>
@@ -198,14 +197,14 @@ export default function ChansonDetailPage() {
             </Card>
 
             {/* Description */}
-            {chanson.description && (
+            {chanson.album && (
               <Card>
                 <CardHeader>
                   <CardTitle>À propos</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    {chanson.description}
+                    Album : {chanson.album}
                   </p>
                 </CardContent>
               </Card>

@@ -46,13 +46,13 @@ const ecran2: EcranCeredis = {
   id: 'ne17-s5-e2',
   numero: 2,
   titre: 'Écoute de synthèse',
-  type: 'ecoute_complete',
+  type: 'ecoute_guidee',
   consigne: 'Dernière écoute avant la production',
   dureeEstimee: 5,
   audioDebut: 0,
   audioFin: 240,
   activite: {
-    type: 'ecoute_complete',
+    type: 'ecoute_guidee',
     contenu: 'Écoute globale avec prise de notes pour la dissertation'
   },
   ceredis: createCeredisMetadata({

@@ -44,12 +44,16 @@ interface VueClasseProps {
 }
 
 // Configuration des couleurs par niveau
-const NIVEAU_COLORS: Record<NiveauCECRL, string> = {
+const NIVEAU_COLORS: Partial<Record<NiveauCECRL, string>> = {
   'A1': 'bg-emerald-500',
   'A2': 'bg-green-500',
+  'A2+': 'bg-green-500',
   'B1': 'bg-blue-500',
+  'B1+': 'bg-blue-500',
   'B2': 'bg-indigo-500',
+  'B2+': 'bg-indigo-500',
   'C1': 'bg-purple-500',
+  'C1+': 'bg-purple-500',
   'C2': 'bg-violet-500'
 };
 

@@ -174,7 +174,7 @@ const ecran5: EcranCeredis = {
     type: 'ordre_elements',
     exercice: {
       id: 'oe1',
-      consigne: 'Remettez dans l\'ordre les étapes d\'une argumentation sur le devoir de mémoire',
+      consigne: 'Remettez dans l\'ordre les étapes d\'une argumentation sur le devoir de mémoire (Une argumentation suit une progression logique)',
       elements: [
         { id: 'e1', texte: 'Présentation du contexte historique', ordre: 1 },
         { id: 'e2', texte: 'Exposition de la problématique morale', ordre: 2 },
@@ -182,8 +182,7 @@ const ecran5: EcranCeredis = {
         { id: 'e4', texte: 'Contre-argument : innocence individuelle', ordre: 4 },
         { id: 'e5', texte: 'Synthèse : distinction mémoire/culpabilité', ordre: 5 },
         { id: 'e6', texte: 'Conclusion : nécessité du devoir de mémoire', ordre: 6 }
-      ],
-      aide: 'Une argumentation suit une progression logique'
+      ]
     }
   },
   ceredis: createCeredisMetadata({

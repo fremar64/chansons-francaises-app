@@ -12,10 +12,16 @@
  * - Expression de l'espoir et de la détermination
  */
 
-import type { Chanson, LigneChanson } from '@/services/pocketbase';
+import type { Chanson } from '@/services/pocketbase';
+
+// Type local pour les paroles synchronisées
+interface LigneSynchronisee {
+  temps: number;
+  texte: string;
+}
 
 // Paroles synchronisées avec timestamps (en secondes)
-export const parolesSync: LigneChanson[] = [
+export const parolesSync: LigneSynchronisee[] = [
   // Introduction instrumentale
   { temps: 0, texte: "" },
   
@@ -283,7 +289,7 @@ export const chansonData: Omit<Chanson, 'id' | 'created' | 'updated'> = {
   duree: 195, // 3:15 en secondes
   genre: ["pop", "chanson française", "chanson sociale"],
   niveau: "B1",
-  type_texte: "argumentatif-injonctif",
+  type_texte: "argumentatif_injonctif",
   themes: [
     "encouragement",
     "résilience",
@@ -293,12 +299,19 @@ export const chansonData: Omit<Chanson, 'id' | 'created' | 'updated'> = {
     "confiance en soi"
   ],
   paroles: parolesSync.map(l => l.texte).filter(Boolean).join('\n'),
-  paroles_synchronisees: parolesSync,
+  paroles_synchronisees: parolesSync.map((l, i) => ({ 
+    id: `ctc-ligne-${i + 1}`, 
+    numero: i + 1, 
+    texte: l.texte, 
+    timestamp: l.temps 
+  })),
   audio_url: "/Répertoire des chansons/Jean-Jacques Goldman - C'est ta chance.mp3",
-  cover_url: null,
-  video_url: null,
-  vocabulaire_cle: vocabulaireCle,
-  points_grammaire: pointsGrammaire,
+  cover_url: undefined,
+  video_url: undefined,
+  vocabulaire_cle: Object.fromEntries(
+    vocabulaireCle.map(v => [v.mot, `${v.definition}. Ex: "${v.exemple}"`])
+  ),
+  points_grammaire: pointsGrammaire.map(p => `${p.point}: ${p.explication}`),
   contexte_culturel: contexteCulturel,
   actif: true,
 };

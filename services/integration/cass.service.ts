@@ -271,7 +271,7 @@ export class CassService {
    * Obtenir un résumé des compétences d'un apprenant
    */
   async getUserCompetencySummary(userId: string): Promise<{
-    total: number;
+    totalCompetencies: number;
     mastered: number;
     inProgress: number;
     byDomain: Record<string, number>;
@@ -307,7 +307,7 @@ export class CassService {
     }
 
     return {
-      total: competencyMap.size,
+      totalCompetencies: competencyMap.size,
       mastered,
       inProgress,
       byDomain
