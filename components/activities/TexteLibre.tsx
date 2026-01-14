@@ -9,7 +9,7 @@
  * - 5.7 : Réguler consciemment sa production écrite
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Send, Info, Lightbulb, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
+import { useActivityTracking } from '@/hooks/useActivityTracking';
+import type { CeredisMetadata } from '@/types/ceredis';
+import type { NiveauCECRL } from '@/services/integration-unified/types.unified';
 
 export interface TexteLibreData {
   id: string;
@@ -35,17 +38,59 @@ export interface TexteLibreData {
 
 interface TexteLibreProps {
   exercice: TexteLibreData;
+  
+  /** Metadata CEREDIS pour le tracking */
+  metadata: {
+    activityId: string;
+    activityName: string;
+    chansonId: string;
+    seanceId: string;
+    ceredis: CeredisMetadata;
+    niveau: NiveauCECRL;
+  };
+  
+  /** ID utilisateur */
+  userId: string;
+  
+  /** Nom utilisateur */
+  userName: string;
+  
   onComplete: (score: number) => void;
+  
+  /** Mode debug */
+  debug?: boolean;
 }
 
-export function TexteLibre({ exercice, onComplete }: TexteLibreProps) {
+export function TexteLibre({ 
+  exercice, 
+  metadata,
+  userId,
+  userName,
+  onComplete,
+  debug = false
+}: TexteLibreProps) {
   const [texte, setTexte] = useState('');
   const [showAide, setShowAide] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   
+  // Timer pour tracking
+  const startTimeRef = useRef<number>(Date.now());
+  
+  // Hook de tracking
+  const { trackActivity, isTracking } = useActivityTracking({
+    userId,
+    userName,
+    debug,
+  });
+  
   const nombreMotsMin = exercice.nombreMotsMin || 50;
   const nombreMotsMax = exercice.nombreMotsMax || 300;
+
+  // Réinitialiser le timer au montage
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
 
   // Compter les mots
   useEffect(() => {
@@ -75,10 +120,44 @@ export function TexteLibre({ exercice, onComplete }: TexteLibreProps) {
     return Math.round((lengthScore + baseScore) * 100);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (hasMinimumContent) {
       setIsSubmitted(true);
       const score = calculateScore();
+      const maxScore = metadata.ceredis.scoreMax || 100;
+      const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
+
+      if (debug) {
+        console.log('[TexteLibre] 📝 Soumission:', {
+          wordCount,
+          score,
+          maxScore,
+          duration,
+        });
+      }
+
+      // Tracker l'activité avec le service unifié
+      // IMPORTANT : response contient le texte pour validation Domaine 5
+      await trackActivity({
+        activityId: metadata.activityId,
+        activityName: metadata.activityName,
+        activityType: 'texte_libre',
+        score: score,
+        maxScore: maxScore,
+        ceredis: metadata.ceredis,
+        chansonId: metadata.chansonId,
+        seanceId: metadata.seanceId,
+        niveau: metadata.niveau,
+        duration,
+        response: texte, // ⚠️ IMPORTANT : preuve réflexive pour Domaine 5
+        metadata: {
+          wordCount,
+          nombreMotsMin,
+          nombreMotsMax,
+          isValidLength,
+        },
+      });
+
       onComplete(score);
     }
   };

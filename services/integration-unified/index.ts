@@ -17,12 +17,18 @@
 export * from './integration.unified';
 export * from './types.unified';
 
-// Export des types principaux pour faciliter l'usage
+// Export explicite des exports principaux pour faciliter l'usage
+export {
+  integrationService,
+  unifiedIntegrationService,
+  createUnifiedPayload
+} from './integration.unified';
+
 export type {
-  UnifiedActivityPayload,
-  UnifiedTrackingResult,
+  ActivityCompletionData as UnifiedActivityPayload,
+  TrackingResult as UnifiedTrackingResult,
   CeredisMetadata,
-  Evidence
+  ActivityStartData
 } from './integration.unified';
 
 export type {

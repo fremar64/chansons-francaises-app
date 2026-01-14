@@ -118,7 +118,6 @@ export function useActivityTracking(options: UseActivityTrackingOptions = {}) {
         if (result.success) {
           if (options.debug) {
             console.log('[useActivityTracking] ✅ Tracking réussi:', {
-              evidences: result.evidencesCreated,
               cassAssertions: result.cassAssertions.length,
               xapiStatements: result.xapiStatements.length,
             });
@@ -144,7 +143,6 @@ export function useActivityTracking(options: UseActivityTrackingOptions = {}) {
         // Retourner un résultat d'erreur
         return {
           success: false,
-          evidencesCreated: 0,
           cassAssertions: [],
           xapiStatements: [],
           errors: [error.message],
@@ -175,8 +173,6 @@ export function useActivityTracking(options: UseActivityTrackingOptions = {}) {
           chansonId: params.chansonId,
           seanceId: params.seanceId,
           niveau: params.niveau,
-          response: params.response,
-          metadata: params.metadata,
         });
 
         if (options.debug) {

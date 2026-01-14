@@ -1,4 +1,168 @@
+# [2026-01-14] Feuille de route détaillée - Intégration Tracking CEREDIS
+
+## Objectif principal
+Assurer un tracking pédagogique complet, sécurisé et robuste pour toutes les activités CEREDIS (xAPI, CaSS, PocketBase) dans l’application Next.js.
+
+---
+
+## 1. Validation et robustesse
+- [ ] Écrire un script de test automatisé pour simuler la complétion de chaque type d’activité (QCM, texte libre, journal, etc.)
+- [ ] Effectuer des tests manuels sur l’interface pour chaque activité et vérifier la création des statements xAPI et assertions CaSS
+- [ ] Vérifier dans les logs serveur que le refresh JWT CaSS fonctionne (expiration, retry 401)
+- [ ] Simuler des erreurs côté serveur (credentials invalides, CaSS down, LRS down) et vérifier la robustesse du système
+
+## 2. Monitoring et logs
+- [ ] Ajouter des logs détaillés (succès, erreurs, refresh JWT) dans les API Routes et le client CaSS
+- [ ] Intégrer Sentry (ou équivalent) pour la capture automatique des erreurs serveur
+- [ ] Configurer une alerte email ou Slack en cas d’erreur critique (échec CaSS/xAPI)
+
+## 3. Optimisation des performances
+- [ ] Utiliser un middleware ou un outil (ex: Next.js middleware, custom logger) pour mesurer le temps de réponse des API Routes
+- [ ] Mettre en cache en mémoire les frameworks/compétences CaSS dans le client (durée configurable)
+- [ ] Analyser les logs pour identifier les goulots d’étranglement
+
+## 4. Sécurité renforcée
+- [ ] Vérifier la présence de `.env.local` dans `.gitignore` et auditer l’historique git
+- [ ] Limiter les permissions des comptes CaSS/xAPI utilisés (lecture/écriture strictement nécessaires)
+- [ ] Mettre en place un rate limit sur les API Routes critiques (ex: /api/ceredis/track)
+- [ ] Ajouter des tests d’intrusion basiques (ex: injection, brute force)
+
+## 5. Expérience utilisateur
+- [ ] Implémenter une gestion d’erreur utilisateur-friendly dans le frontend (toast, modale, etc.)
+- [ ] Ajouter un indicateur de progression ou de succès après chaque soumission d’activité
+- [ ] Proposer un feedback pédagogique (score, compétences validées, etc.)
+
+## 6. Documentation et onboarding
+- [ ] Mettre à jour le GUIDE_INTEGRATION_TRACKING.md avec les dernières pratiques et captures d’écran
+- [ ] Ajouter une section "FAQ" et "Dépannage" dans la documentation
+- [ ] Documenter la procédure pour ajouter un nouveau type d’activité ou une nouvelle compétence
+
+## 7. Interopérabilité et export
+- [ ] Développer une API Route ou un script pour exporter les données de tracking (CSV, JSON)
+- [ ] Tester l’import/export avec d’autres outils pédagogiques (LRS, CaSS, PocketBase)
+- [ ] Documenter le format d’export et les cas d’usage
+
+## 8. Maintenance et évolutivité
+- [ ] Écrire des tests automatisés (unitaires et d’intégration) pour les services critiques
+- [ ] Mettre en place un workflow CI pour exécuter les tests à chaque PR
+- [ ] Planifier une revue mensuelle des dépendances et des vulnérabilités (npm audit)
+
+---
+
+## Prochaines étapes immédiates
+1. Valider le tracking complet sur plusieurs activités (tests manuels et scripts)
+2. Mettre en place un monitoring des erreurs serveur
+3. Optimiser la gestion des appels CaSS (cache, batch, etc.)
+4. Renforcer la documentation pour l’équipe
+5. Préparer l’export des données de tracking
 # Journal de Développement - Chansons Françaises Next.js
+
+## 2026-01-14 - Page séance connectée aux écrans CEREDIS ✅
+
+### Réécriture complète de la page séance
+
+**La page `/chanson/[chansonId]/seance/[seanceId]` utilise maintenant les vrais écrans CEREDIS**
+
+1. **Nouvelle architecture de la page** (`app/chanson/[chansonId]/seance/[seanceId]/page.tsx`)
+   - Chargement des séances via le hook `useSeance`
+   - Recherche par ID (`lecoureur-s1`) ou numéro de séance
+   - Parcours des écrans CEREDIS avec navigation précédent/suivant
+
+2. **Composants d'activités simplifiés** (dans le même fichier)
+   - `EcranIntroSimple` : Introduction avec contenu markdown
+   - `QuizQCMSimple` : Questions à choix multiples interactives
+   - `TexteATrousSimple` : Texte à compléter
+   - `TexteLibreSimple` : Production écrite libre
+   - `JournalReflexifSimple` : Journal de métacognition
+   - `EcouteSimple` : Écran d'écoute (découverte ou ciblée)
+
+3. **Fonction utilitaire type-safe**
+   - `getActiviteContenu()` : Extrait le contenu texte de manière sécurisée
+   - Évite les erreurs TypeScript avec le type union `ActiviteData`
+
+4. **Hook `useSeance` amélioré** (`hooks/useSeances.ts`)
+   - Accepte un ID string (ex: `lecoureur-s1`) ou un numéro
+   - Recherche par ID exact puis extraction du numéro du pattern `s(\d+)`
+
+### Fichiers modifiés
+- `app/chanson/[chansonId]/seance/[seanceId]/page.tsx` - Réécriture complète
+- `hooks/useSeances.ts` - Support ID string et numéro
+
+### Tests validés
+- ✅ TypeScript sans erreurs
+- ✅ Page se charge sans erreurs (200)
+- ✅ Compilation réussie
+
+---
+
+## 2026-01-14 - Connexion des séances aux pages chanson
+
+### Système de chargement des séances ✅
+
+**Les séances des parcours sont maintenant connectées aux pages chanson**
+
+Création d'un système centralisé pour charger les séances pédagogiques :
+
+1. **Index central des parcours** (`data/parcours/index.ts`)
+   - `PARCOURS_MAP` : Map des parcours par slug
+   - `getSeancesBySlug(slug)` : Récupère les séances d'une chanson
+   - `hasParcoursForSlug(slug)` : Vérifie si un parcours existe
+   - Conversion automatique `SeanceCeredis` → `Seance` standard
+
+2. **Hook `useSeances`** (`hooks/useSeances.ts`)
+   - Récupère les séances par chansonId/slug
+   - Essaie plusieurs variantes du slug (lowercase, avec tirets)
+   - Retourne `{ seances, seancesCeredis, hasSeances }`
+
+3. **Intégration dans la page chanson** (`app/chanson/[chansonId]/page.tsx`)
+   - Import du hook `useSeances`
+   - Passage des vraies séances au composant `SeancesList`
+
+### Parcours disponibles (3 sur 4 chansons)
+- ✅ `le-coureur` : 5 séances, 43 écrans
+- ✅ `cest-ta-chance` : 5 séances, 41 écrans  
+- ✅ `la-bas` : 3 séances (en cours de développement)
+- ❌ `ne-en-17-a-leidenstadt` : Parcours à créer
+
+### Prochaines étapes
+- [ ] Connecter la page séance aux vrais écrans CEREDIS
+- [ ] Ajouter les fichiers audio pour le lecteur
+- [ ] Créer le parcours pour "Né en 17 à Leidenstadt"
+
+### Fichiers créés/modifiés
+- `data/parcours/index.ts` (nouveau) - Index central des parcours
+- `hooks/useSeances.ts` (nouveau) - Hook de chargement des séances
+- `app/chanson/[chansonId]/page.tsx` - Intégration du hook
+
+---
+
+## 2026-01-14 - Import "Le coureur" + Configuration .env.local
+
+### Ajout de la configuration ✅
+
+**Création de `.env.local` pour stocker les credentials PocketBase**
+
+- `NEXT_PUBLIC_POCKETBASE_URL` : URL de l'instance PocketBase
+- `PB_ADMIN_EMAIL` : Email admin pour les scripts d'import
+- `PB_ADMIN_PASSWORD` : Mot de passe admin (gitignore déjà en place)
+
+### Import réussi ✅
+
+**"Le coureur" ajouté à PocketBase** (ID: `nfui0t9sgv8jog3`)
+
+- Script `scripts/import-le-coureur.ts` modifié pour lire `.env.local`
+- Installation de `dotenv` en devDependency
+- PocketBase contient maintenant **4 chansons** :
+  1. Là-bas (pidmeza2iggecpc)
+  2. C'est ta chance (78iolh3qjm52pj7)
+  3. Né en 17 à Leidenstadt (y6yl3pyz1qacf5k)
+  4. Le coureur (nfui0t9sgv8jog3)
+
+### Fichiers ajoutés/modifiés
+- `.env.local` (nouveau) - Credentials PocketBase (non versionné)
+- `scripts/import-le-coureur.ts` - Lecture depuis .env.local, audio_url vide
+
+---
 
 ## 2026-01-14 - Connexion PocketBase + système de slugs
 

@@ -1,18 +1,65 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Music2, BookOpen, CheckCircle, Trophy } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useActivityTracking } from '@/hooks/useActivityTracking';
+import type { CeredisMetadata } from '@/types/ceredis';
+import type { NiveauCECRL } from '@/services/integration-unified/types.unified';
 
 interface EcranIntroductionProps {
   contenu: string;
   type: 'introduction' | 'ecoute_decouverte' | 'ecoute_guidee' | 'bilan';
+  
+  /** Metadata CEREDIS pour le tracking */
+  metadata: {
+    activityId: string;
+    activityName: string;
+    chansonId: string;
+    seanceId: string;
+    ceredis: CeredisMetadata;
+    niveau: NiveauCECRL;
+  };
+  
+  /** ID utilisateur */
+  userId: string;
+  
+  /** Nom utilisateur */
+  userName: string;
+  
   onComplete: () => void;
+  
+  /** Mode debug */
+  debug?: boolean;
 }
 
-export function EcranIntroduction({ contenu, type, onComplete }: EcranIntroductionProps) {
+export function EcranIntroduction({ 
+  contenu, 
+  type, 
+  metadata,
+  userId,
+  userName,
+  onComplete,
+  debug = false
+}: EcranIntroductionProps) {
+  // Timer pour tracking
+  const startTimeRef = useRef<number>(Date.now());
+  
+  // Hook de tracking
+  const { trackActivity, isTracking } = useActivityTracking({
+    userId,
+    userName,
+    debug,
+  });
+
+  // Réinitialiser le timer au montage
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
+
   const getIcon = () => {
     switch (type) {
       case 'introduction':
@@ -134,7 +181,40 @@ export function EcranIntroduction({ contenu, type, onComplete }: EcranIntroducti
         <div className="mt-8 flex justify-center">
           <Button
             size="lg"
-            onClick={onComplete}
+            onClick={async () => {
+              const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
+              // Activité non notée (engagement, P1 ou P4)
+              const score = metadata.ceredis.scoreMax || 0;
+              const maxScore = metadata.ceredis.scoreMax || 0;
+
+              if (debug) {
+                console.log('[EcranIntroduction] 📖 Complétion:', {
+                  type,
+                  duration,
+                  score,
+                });
+              }
+
+              // Tracker l'activité avec le service unifié
+              await trackActivity({
+                activityId: metadata.activityId,
+                activityName: metadata.activityName,
+                activityType: type,
+                score: score,
+                maxScore: maxScore,
+                ceredis: metadata.ceredis,
+                chansonId: metadata.chansonId,
+                seanceId: metadata.seanceId,
+                niveau: metadata.niveau,
+                duration,
+                metadata: {
+                  type,
+                  contentLength: contenu.length,
+                },
+              });
+
+              onComplete();
+            }}
             className={cn(
               "min-w-[200px]",
               type === 'bilan' ? 'gradient-accent shadow-glow' : 'gradient-accent',

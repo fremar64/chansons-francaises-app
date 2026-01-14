@@ -12,6 +12,7 @@ import { Footer } from '@/components/layout/Footer';
 import { AudioPlayer } from '@/components/audio/AudioPlayer';
 import { SeancesList } from '@/components/songs/SeancesList';
 import { useChansons } from '@/hooks/useChansons';
+import { useSeances } from '@/hooks/useSeances';
 
 // Couleurs par niveau CECRL
 const levelColors: Record<string, string> = {
@@ -30,6 +31,9 @@ export default function ChansonDetailPage() {
   const { chansons, loading, error } = useChansons();
   // Rechercher par slug OU par id (pour compatibilité avec PocketBase et données locales)
   const chanson = chansons.find(c => c.slug === chansonId || c.id === chansonId);
+  
+  // Récupérer les séances du parcours
+  const { seances, hasSeances } = useSeances(chanson?.slug || chansonId);
 
   if (loading) {
     return (
@@ -166,7 +170,7 @@ export default function ChansonDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <SeancesList chansonId={chansonId || ''} seances={[]} />
+                <SeancesList chansonId={chanson?.slug || chansonId || ''} seances={seances} />
               </CardContent>
             </Card>
           </div>

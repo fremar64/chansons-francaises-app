@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Headphones, Music2, Play, Pause, RotateCcw, Volume2, Info, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,6 +8,9 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { AudioPlayer } from '@/components/audio/AudioPlayer';
 import { cn } from '@/lib/utils';
+import { useActivityTracking } from '@/hooks/useActivityTracking';
+import type { CeredisMetadata } from '@/types/ceredis';
+import type { NiveauCECRL } from '@/services/integration-unified/types.unified';
 
 export interface EcouteChansonData {
   id: string;
@@ -32,18 +35,61 @@ export interface EcouteChansonData {
 
 interface EcouteChansonProps {
   data: EcouteChansonData;
+  
+  /** Metadata CEREDIS pour le tracking */
+  metadata: {
+    activityId: string;
+    activityName: string;
+    chansonId: string;
+    seanceId: string;
+    ceredis: CeredisMetadata;
+    niveau: NiveauCECRL;
+  };
+  
+  /** ID utilisateur */
+  userId: string;
+  
+  /** Nom utilisateur */
+  userName: string;
+  
   onComplete: () => void;
   className?: string;
+  
+  /** Mode debug */
+  debug?: boolean;
 }
 
-export function EcouteChanson({ data, onComplete, className }: EcouteChansonProps) {
+export function EcouteChanson({ 
+  data, 
+  metadata,
+  userId,
+  userName,
+  onComplete, 
+  className,
+  debug = false
+}: EcouteChansonProps) {
   const [hasListened, setHasListened] = useState(false);
   const [listeningProgress, setListeningProgress] = useState(0);
   const [currentLyricIndex, setCurrentLyricIndex] = useState(-1);
   const [isCompleted, setIsCompleted] = useState(false);
   
+  // Timer pour tracking
+  const startTimeRef = useRef<number>(Date.now());
+  
+  // Hook de tracking
+  const { trackActivity, isTracking } = useActivityTracking({
+    userId,
+    userName,
+    debug,
+  });
+  
   const isDecouverte = data.type === 'ecoute_decouverte';
   const minimumListenPercentage = isDecouverte ? 70 : 50; // % minimum à écouter
+
+  // Réinitialiser le timer au montage
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
 
   // Gestion de la mise à jour du temps
   const handleTimeUpdate = (currentTime: number) => {
@@ -74,8 +120,42 @@ export function EcouteChanson({ data, onComplete, className }: EcouteChansonProp
     }
   }, [listeningProgress, minimumListenPercentage, hasListened]);
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     setIsCompleted(true);
+    
+    const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
+    // Activité non notée (engagement, P1) - score basé sur progression d'écoute
+    const score = hasListened ? metadata.ceredis.scoreMax : 0;
+    const maxScore = metadata.ceredis.scoreMax || 0;
+
+    if (debug) {
+      console.log('[EcouteChanson] 🎧 Complétion:', {
+        hasListened,
+        listeningProgress,
+        duration,
+        score,
+      });
+    }
+
+    // Tracker l'activité avec le service unifié
+    await trackActivity({
+      activityId: metadata.activityId,
+      activityName: metadata.activityName,
+      activityType: data.type === 'ecoute_decouverte' ? 'ecoute_decouverte' : 'ecoute_ciblee',
+      score: score,
+      maxScore: maxScore,
+      ceredis: metadata.ceredis,
+      chansonId: metadata.chansonId,
+      seanceId: metadata.seanceId,
+      niveau: metadata.niveau,
+      duration,
+      metadata: {
+        listeningProgress: Math.round(listeningProgress),
+        hasListened,
+        type: data.type,
+      },
+    });
+
     onComplete();
   };
 
