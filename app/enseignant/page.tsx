@@ -76,8 +76,8 @@ export default function DashboardEnseignantPage() {
   }));
 
   // Construire un objet domainesScores attendu par `RadarCompetences`
-  const domainesScores: Record<string, number> = profilDomaines.reduce((acc, d) => {
-    const key = d.abbrev || d.domaineName || String(d.domaine);
+  const domainesScores: Record<string, number> = profilDomaines.reduce((acc, d, i) => {
+    const key = d.abbrev || d.domaineName || (d as any).domaineId || `domaine_${i}`;
     acc[key] = d.score;
     return acc;
   }, {} as Record<string, number>);
