@@ -6,6 +6,19 @@
 
 2026-01-20 - Automatisation test tracking & validation alertes
 
+2026-01-20 - Automatisation CI/CD (Github Actions)
+
+2026-01-20 - Déploiement automatique Vercel (CI/CD)
+
+- Ajout du job deploy dans le workflow Github Actions : déploiement automatique sur Vercel après validation des tests.
+- Secrets VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID à configurer dans Github pour activer le déploiement.
+- Pipeline complet : lint, build, tests, tracking, alertes, déploiement.
+
+- Création du workflow .github/workflows/ci.yml : lint, build, tests unitaires, script de tracking automatisé et alertes Slack à chaque push/PR.
+- Gestion des secrets (SLACK_WEBHOOK_URL, credentials) via Github.
+- Traçabilité complète des tests et alertes dans le pipeline CI.
+- Prochaine étape : ajout du déploiement automatique et des tests E2E.
+
 - Création du script automatisé test-ceredis-tracking.js pour simuler la complétion d’activités (QCM, texte libre, journal, écoute) via l’API /api/ceredis/track.
 - Génération d’un rapport JSON détaillant les succès/échecs pour chaque activité.
 - Validation du flux d’alerte Slack : en cas d’erreur critique (ex : API injoignable, erreur xAPI/CaSS), un message est envoyé sur le canal configuré.

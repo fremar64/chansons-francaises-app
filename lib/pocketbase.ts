@@ -224,14 +224,27 @@ export const register = async (
   console.log('Données envoyées à PocketBase pour création user:', userData);
   const user = await pb.collection('users').create<User>(userData);
   // Connexion automatique après inscription
-  await pb.collection('users').authWithPassword(email, password);
-  return user;
+  const authData = await pb.collection('users').authWithPassword<User>(email, password);
+  // Récupérer l'utilisateur complet (avec champs personnalisés)
+  try {
+    const full = await pb.collection('users').getOne<User>(authData.record.id);
+    return full;
+  } catch {
+    return authData.record;
+  }
 };
 
 // Helper pour la connexion
 export const login = async (email: string, password: string): Promise<User> => {
+  // PocketBase accepte une identité (email ou username) en première position
   const authData = await pb.collection('users').authWithPassword<User>(email, password);
-  return authData.record;
+  // Récupérer l'utilisateur complet pour s'assurer d'avoir les champs custom (role, isValidated...)
+  try {
+    const full = await pb.collection('users').getOne<User>(authData.record.id);
+    return full;
+  } catch {
+    return authData.record;
+  }
 };
 
 // Helper pour la connexion OAuth2
@@ -246,7 +259,13 @@ export const refreshAuth = async (): Promise<User | null> => {
   
   try {
     const authData = await pb.collection('users').authRefresh<User>();
-    return authData.record;
+    // Récupérer le profil complet après refresh
+    try {
+      const full = await pb.collection('users').getOne<User>(authData.record.id);
+      return full;
+    } catch {
+      return authData.record;
+    }
   } catch {
     pb.authStore.clear();
     return null;

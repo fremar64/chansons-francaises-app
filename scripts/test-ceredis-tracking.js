@@ -10,46 +10,60 @@ dotenv.config({ path: '.env.local' });
 
 const API_URL = 'http://localhost:3000/api/ceredis/track'; // Adapter si besoin
 
+
 const testUser = {
-  id: 'test-user-ceredis',
-  email: 'test-ceredis@ceredis.net',
-  role: 'student',
+  userId: 'test-user-ceredis',
+  userName: 'Test Ceredis',
 };
 
 const activities = [
   {
-    type: 'qcm',
-    data: {
-      question: 'Quel est le synonyme de "rapide" ?',
-      reponse: 'vite',
-      correct: true,
-      score: 1,
-    },
+    activityType: 'qcm',
+    activityId: 'act-qcm-001',
+    activityName: 'QCM Synonymes',
+    chansonId: 'chanson-001',
+    seanceId: 'seance-001',
+    score: 1,
+    maxScore: 1,
+    duration: 30,
+    niveau: 'A2',
+    response: 'vite',
   },
   {
-    type: 'texte_libre',
-    data: {
-      prompt: 'Exprime ton opinion sur la chanson.',
-      texte: 'J’ai beaucoup aimé la chanson pour sa poésie.',
-      score: 2,
-    },
+    activityType: 'texte_libre',
+    activityId: 'act-txtlibre-001',
+    activityName: 'Texte libre sur la chanson',
+    chansonId: 'chanson-001',
+    seanceId: 'seance-001',
+    score: 2,
+    maxScore: 2,
+    duration: 120,
+    niveau: 'A2',
+    response: 'J’ai beaucoup aimé la chanson pour sa poésie.',
   },
   {
-    type: 'journal',
-    data: {
-      reflexion: 'Aujourd’hui, j’ai appris de nouveaux mots.',
-      contexte: 'Séance 2',
-      score: 1,
-    },
+    activityType: 'journal_reflexif',
+    activityId: 'act-journal-001',
+    activityName: 'Journal réflexif',
+    chansonId: 'chanson-001',
+    seanceId: 'seance-001',
+    score: 1,
+    maxScore: 1,
+    duration: 60,
+    niveau: 'A2',
+    response: 'Aujourd’hui, j’ai appris de nouveaux mots.',
   },
   {
-    type: 'ecoute',
-    data: {
-      audio: 'le-coureur.mp3',
-      duree: 120,
-      comprehension: 'bonne',
-      score: 1,
-    },
+    activityType: 'ecoute',
+    activityId: 'act-ecoute-001',
+    activityName: 'Écoute de la chanson',
+    chansonId: 'chanson-001',
+    seanceId: 'seance-001',
+    score: 1,
+    maxScore: 1,
+    duration: 120,
+    niveau: 'A2',
+    response: 'bonne',
   },
 ];
 
@@ -57,27 +71,26 @@ async function run() {
   const results = [];
   for (const activity of activities) {
     const payload = {
-      user: testUser,
-      activityType: activity.type,
-      activityData: activity.data,
+      ...testUser,
+      ...activity,
       timestamp: new Date().toISOString(),
     };
     try {
       const res = await axios.post(API_URL, payload);
       results.push({
-        type: activity.type,
+        type: activity.activityType,
         status: 'success',
         statusCode: res.status,
         data: res.data,
       });
-      console.log(`✔️  [${activity.type}] OK`, res.data);
+      console.log(`✔️  [${activity.activityType}] OK`, res.data);
     } catch (err) {
       results.push({
-        type: activity.type,
+        type: activity.activityType,
         status: 'error',
         error: err.response?.data || err.message,
       });
-      console.error(`❌ [${activity.type}]`, err.response?.data || err.message);
+      console.error(`❌ [${activity.activityType}]`, err.response?.data || err.message);
     }
   }
   try {

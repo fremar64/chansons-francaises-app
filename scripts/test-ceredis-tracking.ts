@@ -75,9 +75,9 @@ async function run() {
       results.push({
         type: activity.type,
         status: 'error',
-        error: err.response?.data || err.message,
+        error: (err as any).response?.data || (err as any).message,
       });
-      console.error(`❌ [${activity.type}]`, err.response?.data || err.message);
+      console.error(`❌ [${activity.type}]`, (err as any).response?.data || (err as any).message);
     }
   }
   try {

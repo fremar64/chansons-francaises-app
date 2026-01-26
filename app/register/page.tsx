@@ -149,20 +149,6 @@ export default function RegisterPage() {
         setError('Erreur lors de l\'inscription. Veuillez réessayer.');
       }
     }
-            {rawError && (
-              <div className="mt-2 p-2 bg-red-100 text-xs text-red-800 overflow-x-auto max-w-full">
-                <div><b>Erreur brute :</b> {rawError.toString ? rawError.toString() : String(rawError)}</div>
-                {rawError.message && <div><b>message :</b> {rawError.message}</div>}
-                {rawError.data && (
-                  <div><b>data :</b> <pre>{JSON.stringify(rawError.data, null, 2)}</pre></div>
-                )}
-                {rawError.response && (
-                  <div><b>response :</b> <pre>{JSON.stringify(rawError.response, null, 2)}</pre></div>
-                )}
-                {rawError.stack && <div><b>stack :</b> <pre>{rawError.stack}</pre></div>}
-                <div><b>Propriétés énumérables :</b> <pre>{JSON.stringify(Object.assign({}, rawError), null, 2)}</pre></div>
-              </div>
-            )}
   };
 
   const getPasswordStrength = () => {
@@ -245,6 +231,21 @@ export default function RegisterPage() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
+            )}
+            
+            {rawError && (
+              <div className="mt-2 p-2 bg-red-100 text-xs text-red-800 overflow-x-auto max-w-full">
+                <div><b>Erreur brute :</b> {rawError.toString ? rawError.toString() : String(rawError)}</div>
+                {rawError.message && <div><b>message :</b> {rawError.message}</div>}
+                {rawError.data && (
+                  <div><b>data :</b> <pre>{JSON.stringify(rawError.data, null, 2)}</pre></div>
+                )}
+                {rawError.response && (
+                  <div><b>response :</b> <pre>{JSON.stringify(rawError.response, null, 2)}</pre></div>
+                )}
+                {rawError.stack && <div><b>stack :</b> <pre>{rawError.stack}</pre></div>}
+                <div><b>Propriétés énumérables :</b> <pre>{JSON.stringify(Object.assign({}, rawError), null, 2)}</pre></div>
+              </div>
             )}
 
             {/* Step 1: Email & Password */}

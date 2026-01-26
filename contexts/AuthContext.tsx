@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User | void>;
   loginWithProvider: (provider: 'google' | 'github' | 'discord') => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
@@ -35,14 +35,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // Vérifier si un token existe dans le localStorage
+        // Si un token valide existe, tenter un refresh
         if (pb.authStore.isValid) {
           const refreshedUser = await refreshAuth();
           setUser(refreshedUser);
+        } else if (pb.authStore.model) {
+          // Si un modèle est présent (cache), l'utiliser comme fallback
+          setUser(pb.authStore.model as unknown as User);
         }
       } catch (error) {
         console.error('Erreur lors de l\'initialisation de l\'authentification:', error);
-        pb.authStore.clear();
+        try { pb.authStore.clear(); } catch {};
       } finally {
         setIsLoading(false);
       }
@@ -64,10 +67,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const loggedInUser = await pbLogin(email, password);
-      if (!loggedInUser.isValidated) {
+
+      // S'assurer que PocketBase a bien stocké le token
+      if (!pb.authStore.isValid) {
+        // tenter un refresh pour diagnostiquer
+        await refreshAuth();
+        if (!pb.authStore.isValid) {
+          throw new Error('Authentification invalide : le token n\'a pas été conservé.');
+        }
+      }
+
+      // Les admins peuvent se connecter sans validation
+      // Les autres utilisateurs doivent être validés
+      if (loggedInUser.role !== 'admin' && !loggedInUser.isValidated) {
+        // Déloguer localement pour éviter état incohérent
+        try { pb.authStore.clear(); } catch {};
         throw new Error("Votre compte n'a pas encore été validé par un administrateur.");
       }
+
       setUser(loggedInUser);
+      return loggedInUser;
+    } catch (err) {
+      throw err;
     } finally {
       setIsLoading(false);
     }

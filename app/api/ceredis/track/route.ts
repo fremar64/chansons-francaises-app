@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     // ========================================
     // 1. xAPI : Créer statement "completed"
     // ========================================
-    if (process.env.NEXT_PUBLIC_LRS_ENDPOINT) {
+    if (process.env.XAPI_LRS_URL) {
       try {
         const statement = {
           actor: {
@@ -127,9 +127,9 @@ export async function POST(request: NextRequest) {
         };
 
         // Envoyer à LRS Ralph
-        const lrsUsername = process.env.NEXT_PUBLIC_LRS_USERNAME;
-        const lrsPassword = process.env.NEXT_PUBLIC_LRS_PASSWORD;
-        const lrsEndpoint = process.env.NEXT_PUBLIC_LRS_ENDPOINT;
+        const lrsUsername = process.env.XAPI_LRS_USERNAME;
+        const lrsPassword = process.env.XAPI_LRS_PASSWORD;
+        const lrsEndpoint = process.env.XAPI_LRS_URL;
 
         if (lrsUsername && lrsPassword && lrsEndpoint) {
           const auth = Buffer.from(`${lrsUsername}:${lrsPassword}`).toString('base64');
@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
             result.cassAssertions.push(created);
             
             // Créer un statement xAPI "mastered" pour cette compétence
-            if (process.env.NEXT_PUBLIC_LRS_ENDPOINT) {
+            if (process.env.XAPI_LRS_URL) {
               const masteredStatement = {
                 actor: {
                   objectType: 'Agent',
@@ -243,11 +243,11 @@ export async function POST(request: NextRequest) {
                 },
               };
 
-              const lrsUsername = process.env.NEXT_PUBLIC_LRS_USERNAME;
-              const lrsPassword = process.env.NEXT_PUBLIC_LRS_PASSWORD;
-              const lrsEndpoint = process.env.NEXT_PUBLIC_LRS_ENDPOINT;
+              const lrsUsername = process.env.XAPI_LRS_USERNAME;
+              const lrsPassword = process.env.XAPI_LRS_PASSWORD;
+              const lrsEndpoint = process.env.XAPI_LRS_URL;
 
-              if (lrsUsername && lrsPassword) {
+              if (lrsUsername && lrsPassword && lrsEndpoint) {
                 const auth = Buffer.from(`${lrsUsername}:${lrsPassword}`).toString('base64');
                 
                 await fetch(`${lrsEndpoint}/statements`, {
