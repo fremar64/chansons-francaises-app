@@ -149,7 +149,7 @@ export function useDashboard(): DashboardStats {
 
         // 6. Construire l'historique des activités
         const dernieresActivites = progressions.slice(0, 10).map(p => {
-          const seance = p.expand?.seance;
+          const seance = (p as any).expand?.seance;
           return {
             id: p.id,
             titre: seance?.titre || 'Activité sans titre',
