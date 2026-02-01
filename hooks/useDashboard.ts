@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { pb } from '@/lib/pocketbase';
+import { calculateUserScore } from '@/lib/ceredis/client';
 
 export interface DashboardStats {
   seancesTerminees: number;
@@ -54,12 +55,21 @@ export function useDashboard(): DashboardStats {
       }
 
       try {
-        // 1. Charger les progressions
-        const progressions = await pb.collection('progression').getFullList({
-          filter: `user = "${user.id}"`,
-          sort: '-updated',
-          expand: 'seance',
-        });
+        // 1. Charger les progressions (si la collection existe)
+        let progressions: any[] = [];
+        try {
+          progressions = await pb.collection('progression').getFullList({
+            filter: `user = "${user.id}"`,
+            sort: '-updated',
+            expand: 'seance',
+          });
+        } catch (progressionError: any) {
+          // Collection progression n'existe pas encore ou pas de données
+          // Ce n'est pas une erreur critique, continuer avec tableau vide
+          if (progressionError?.status !== 404 && progressionError?.status !== 400) {
+            throw progressionError;
+          }
+        }
 
         // 2. Calculer les statistiques de base
         const seancesTerminees = progressions.filter(p => p.statut === 'termine').length;
@@ -78,10 +88,18 @@ export function useDashboard(): DashboardStats {
         );
 
         // 3. Charger les evidences pour calcul des domaines
-        const evidences = await pb.collection('evidences').getFullList({
-          filter: `user = "${user.id}"`,
-          sort: '-created',
-        });
+        let evidences: any[] = [];
+        try {
+          evidences = await pb.collection('evidences').getFullList({
+            filter: `user = "${user.id}"`,
+            sort: '-created',
+          });
+        } catch (evidenceError: any) {
+          // Collection evidences n'existe pas encore ou pas de données
+          if (evidenceError?.status !== 404 && evidenceError?.status !== 400) {
+            throw evidenceError;
+          }
+        }
 
         // 4. Calculer les scores par domaine
         const domainesScores: Record<string, number> = {
@@ -124,27 +142,44 @@ export function useDashboard(): DashboardStats {
           }
         });
 
-        // 5. Tenter de récupérer le score CEREDIS depuis PostgreSQL ou cache
-        // TODO: Implémenter l'appel à l'API /api/ceredis/calculate
+        // 5. Tenter de récupérer le score CEREDIS via le moteur (API)
         let scoreCeredis: number | null = null;
         let niveauCecrl: string | null = null;
 
         try {
-          // Calculer un score CEREDIS approximatif basé sur les domaines
-          const domaineScoresArray = Object.values(domainesScores);
-          if (domaineScoresArray.some(score => score > 0)) {
-            const moyenneDomaines = domaineScoresArray.reduce((sum, score) => sum + score, 0) / 5;
-            scoreCeredis = Math.round(moyenneDomaines * 6); // Score sur 600
+          const ceredisResult = await calculateUserScore(user.id);
+          scoreCeredis = ceredisResult.ceredisScore;
+          niveauCecrl = ceredisResult.cecrlLevel;
 
-            // Déterminer le niveau CECRL approximatif
-            if (scoreCeredis >= 500) niveauCecrl = 'C1';
-            else if (scoreCeredis >= 400) niveauCecrl = 'B2';
-            else if (scoreCeredis >= 300) niveauCecrl = 'B1';
-            else if (scoreCeredis >= 200) niveauCecrl = 'A2';
-            else niveauCecrl = 'A1';
+          // Remplacer les scores de domaines si fournis par le moteur
+          if (ceredisResult.domainScores) {
+            Object.keys(domainesScores).forEach(domain => {
+              const v = (ceredisResult.domainScores as Record<string, number>)[domain];
+              if (v !== undefined && v !== null) {
+                domainesScores[domain] = Math.round(v);
+              }
+            });
           }
         } catch (error) {
-          console.error('Erreur lors du calcul du score CEREDIS:', error);
+          // Fallback : utiliser l'estimation approximative locale
+          console.warn('CEREDIS API failed, falling back to local estimation', error);
+
+          try {
+            const domaineScoresArray = Object.values(domainesScores);
+            if (domaineScoresArray.some(score => score > 0)) {
+              const moyenneDomaines = domaineScoresArray.reduce((sum, score) => sum + score, 0) / 5;
+              scoreCeredis = Math.round(moyenneDomaines * 6); // Score sur 600
+
+              // Déterminer le niveau CECRL approximatif
+              if (scoreCeredis >= 500) niveauCecrl = 'C1';
+              else if (scoreCeredis >= 400) niveauCecrl = 'B2';
+              else if (scoreCeredis >= 300) niveauCecrl = 'B1';
+              else if (scoreCeredis >= 200) niveauCecrl = 'A2';
+              else niveauCecrl = 'A1';
+            }
+          } catch (err) {
+            console.error('Erreur lors du calcul du score CEREDIS (fallback):', err);
+          }
         }
 
         // 6. Construire l'historique des activités
@@ -189,7 +224,7 @@ export function useDashboard(): DashboardStats {
           error: null,
         });
 
-      } catch (error) {
+      } catch (error: any) {
         console.error('Erreur lors du chargement du dashboard:', error);
         setStats(prev => ({
           ...prev,

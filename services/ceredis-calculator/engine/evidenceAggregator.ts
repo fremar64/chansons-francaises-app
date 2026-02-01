@@ -1,47 +1,39 @@
-/**
- * Evidence Aggregator - Regrouper les preuves par compétence
- * TypeScript version
- */
+import type { Evidence, AggregatedEvidence } from '../types';
+import type { CompetencyId } from '@/types/ceredis';
 
-export interface Evidence {
-  competencyId: string;
-  type: 'P1' | 'P2' | 'P3' | 'P4';
-  score: number;
-  [key: string]: any;
-}
-
-export function aggregateEvidence(evidences: Evidence[]): Record<string, Evidence[]> {
-  const byCompetency: Record<string, Evidence[]> = {};
+export function aggregateEvidences(
+  evidences: Evidence[]
+): Map<CompetencyId, AggregatedEvidence> {
+  const aggregated = new Map<CompetencyId, AggregatedEvidence>();
+  
   for (const evidence of evidences) {
-    const competencyId = evidence.competencyId;
-    if (!byCompetency[competencyId]) {
-      byCompetency[competencyId] = [];
+    const compId = evidence.competency_id;
+    
+    if (!aggregated.has(compId)) {
+      aggregated.set(compId, {
+        competencyId: compId,
+        evidences: [],
+        count: 0,
+        avgScore: 0,
+        bestScore: 0,
+        evidenceTypes: new Set()
+      });
     }
-    byCompetency[competencyId].push(evidence);
-  }
-  return byCompetency;
-}
-
-export function aggregateEvidenceByType(evidences: Evidence[]): Record<'P1'|'P2'|'P3'|'P4', Evidence[]> {
-  const byType: Record<'P1'|'P2'|'P3'|'P4', Evidence[]> = {
-    P1: [],
-    P2: [],
-    P3: [],
-    P4: []
-  };
-  for (const evidence of evidences) {
-    const type = evidence.type;
-    if (byType[type]) {
-      byType[type].push(evidence);
+    
+    const agg = aggregated.get(compId)!;
+    agg.evidences.push(evidence);
+    agg.count++;
+    agg.evidenceTypes.add(evidence.evidence_type);
+    
+    if (evidence.score > agg.bestScore) {
+      agg.bestScore = evidence.score;
     }
   }
-  return byType;
-}
-
-export function getEvidenceTypes(evidences: Evidence[]): string[] {
-  const types = new Set<string>();
-  for (const evidence of evidences) {
-    types.add(evidence.type);
+  
+  for (const [, agg] of aggregated.entries()) {
+    const totalScore = agg.evidences.reduce((sum, e) => sum + e.score, 0);
+    agg.avgScore = agg.count > 0 ? totalScore / agg.count : 0;
   }
-  return Array.from(types);
+  
+  return aggregated;
 }

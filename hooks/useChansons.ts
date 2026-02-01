@@ -65,10 +65,10 @@ const LOCAL_PARCOURS_DATA: ChansonDisplay[] = [
   {
     id: 'la-bas',
     slug: 'la-bas',
-    titre: laBasParcours.meta.titre,
-    artiste: laBasParcours.meta.artiste,
-    album: laBasParcours.meta.album || 'Entre gris clair et gris foncé',
-    annee: laBasParcours.meta.annee,
+    titre: laBasParcours.parcoursMeta.titre,
+    artiste: laBasParcours.parcoursMeta.artiste,
+    album: laBasParcours.parcoursMeta.album || 'Entre gris clair et gris foncé',
+    annee: laBasParcours.parcoursMeta.annee,
     genre: ['pop', 'chanson française'],
     pochette: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400&h=400&fit=crop',
     audioUrl: '/audio/chansons/jean-jacques-goldman/la-bas.mp3',
@@ -76,7 +76,7 @@ const LOCAL_PARCOURS_DATA: ChansonDisplay[] = [
     typeTexte: 'poétique',
     thematiques: ['voyage', 'liberté', 'ailleurs'],
     duree: 300,
-    nombreSeances: laBasParcours.stats.nombreSeances,
+    nombreSeances: laBasParcours.statistiques.nombreSeances,
     competencesCibles: ['compréhension orale', 'vocabulaire', 'expression']
   }
 ];

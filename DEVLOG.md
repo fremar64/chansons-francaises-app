@@ -1,3 +1,71 @@
+## 2026-02-01 — Corrections erreurs TypeScript et build réussi
+
+### 1. Correction erreurs de typage dans seance-5-debat-philosophique.ts
+- Remplacement de `contenu` par `texte` dans les éléments OrdreElements (ligne 298+)
+- Remplacement de `categorie` par `ordre` pour correspondre au type OrdreElementsData
+- Suppression des propriétés non typées `typeOrdre` et `critereOrdre`
+- Conformité avec l'interface définie dans `components/activities/OrdreElements.tsx`
+
+### 2. Correction erreurs dans hooks/useChansons.ts
+- Correction référence `laBasParcours.meta` → `laBasParcours.parcoursMeta`
+- Correction référence `laBasParcours.stats` → `laBasParcours.statistiques`
+- Harmonisation avec la structure d'export de `data/parcours/la-bas/index.ts`
+
+### 3. Build Next.js réussi
+- ✅ Compilation TypeScript sans erreurs
+- ✅ 17 routes générées correctement
+- ✅ Pages statiques pré-rendues
+- ✅ API Routes fonctionnelles
+
+### 4. Évaluation complète du projet
+- Création de EVALUATION_PROJET_2026.md (analyse détaillée, 78% d'avancement)
+- Création de PLAN_ACTION_IMMEDIAT_FEVRIER_2026.md (plan 2 semaines)
+- Identification des priorités : tests automatisés, parcours "La Corrida", documentation
+
+---
+
+## 2026-01-30 — Importation complète et corrections pédagogiques "Là-bas" (Goldman)
+
+### 1. Build Next.js réussi
+- Suppression des duplications dans ceredisCalculator.ts
+- Correction des imports et compatibilité evidenceType/evidence_type dans levelValidator.ts
+- Correction du type de texte dans chanson.ts ("dialogue_dramatique" → "argumentatif")
+- Suppression du type Chanson dans chanson-enrichi.ts (structure personnalisée)
+Résultat : build et typage TypeScript OK.
+
+### 2. Création et enrichissement du fichier "Là-bas"
+- Génération de data/parcours/la-bas/chanson.ts (~1100 lignes)
+- Paroles authentiques, structure dialogique, timestamps, identification des locuteurs
+- Vocabulaire métaphysique (17 mots, 5 critiques)
+- Points de grammaire philosophiques (5)
+- Contexte culturel/philosophique enrichi (~3500 mots)
+
+### 3. Import PocketBase réussi
+- Génération de data/parcours/la-bas/chanson.json (export universel)
+- Adaptation du script scripts/import-la-bas.js pour JSON
+- Import distant : échec (API admin non exposée)
+- Import local/serveur : OK, chanson mise à jour dans PocketBase
+
+### 4. Qualité pédagogique
+- Correction majeure : vocabulaire métaphysique (lecture symbolique, inversion radicale du réel)
+- Positionnement de Goldman comme penseur spirituel
+- Pédagogie : initiation au langage symbolique (Bible, philosophie, poésie, mystique)
+
+### 5. Fichiers créés/modifiés
+- data/parcours/la-bas/chanson.ts
+- data/parcours/la-bas/chanson.json
+- services/ceredis-calculator/engine/ceredisCalculator.ts
+- services/ceredis-calculator/engine/levelValidator.ts
+- data/parcours/rouge/chanson-enrichi.ts
+- scripts/import-la-bas.js
+
+### 6. Prochaines étapes
+- Ajouter fichiers audio/cover dans PocketBase (upload via admin ou script)
+- Créer séances pédagogiques : data/parcours/la-bas/seances/
+   - Séance 1 : Compréhension globale (A2-B1)
+   - Séance 2 : Vocabulaire symbolique (B2)
+   - Séance 3 : Analyse philosophique (C1)
+- Intégrer le moteur CEREDIS dans Next.js (voir PLAN_INTEGRATION_MOTEUR_CEREDIS.md)
 # 2026-01-19 - Dashboard Enseignant (Learning Analytics V1)
 
 2026-01-19 - Lancement validation tracking CEREDIS (xAPI, CaSS, PocketBase)
@@ -18,6 +86,29 @@
 - Gestion des secrets (SLACK_WEBHOOK_URL, credentials) via Github.
 - Traçabilité complète des tests et alertes dans le pipeline CI.
 - Prochaine étape : ajout du déploiement automatique et des tests E2E.
+
+# 2026-01-26 - Ajout du parcours pédagogique "Rouge" (Fredericks Goldman Jones)
+
+- Création du parcours pédagogique "Rouge" sous `data/parcours/rouge`.
+- Fichiers ajoutés :
+   - `data/parcours/rouge/index.ts` (export du parcours)
+   - `data/parcours/rouge/session-a2.ts` (séance A2 : compréhension globale, QCM, production guidée)
+   - `data/parcours/rouge/session-b1.ts` (séance B1 : explication du symbole, justification guidée)
+   - `data/parcours/rouge/session-b2.ts` (séance B2 : analyse symbolique, débat, argumentation)
+   - `data/parcours/rouge/session-c1.ts` (séance C1 : contexte historico-philosophique, essai critique)
+
+- Conformité pédagogique : chaque séance cible un niveau CECRL unique (A2, B1, B2, C1), instructions en français, preuves CaSS déclarées (choice, text, argument, reflection), modes d\'évaluation précisés (auto / guided / qualitative).
+
+- Remarque: le contenu évite toute propagande; la chanson est présentée comme objet critique, historique et symbolique — conforme aux attentes d\'audit institutionnel.
+
+# 2026-01-26 - Ajout métadonnées audio et README pour "Rouge"
+
+- Ajout de la référence audio publique dans `data/parcours/rouge/index.ts` :
+   - `audio.mp3` → `/audio/chansons/jean-jacques-goldman/rouge.mp3`
+- Création de `data/parcours/rouge/README.md` décrivant l'utilisation du parcours et le chemin audio public.
+- Objectif: permettre l'intégration immédiate du lecteur audio côté frontend et fournir des repères pour l'audit pédagogique.
+
+
 
 - Création du script automatisé test-ceredis-tracking.js pour simuler la complétion d’activités (QCM, texte libre, journal, écoute) via l’API /api/ceredis/track.
 - Génération d’un rapport JSON détaillant les succès/échecs pour chaque activité.

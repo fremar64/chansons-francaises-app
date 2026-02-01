@@ -1,0 +1,4 @@
+{
+  "title": "Alerte Chercheurs - Domaine 5",
+  "condition": "avg_domain5 < 50"
+}

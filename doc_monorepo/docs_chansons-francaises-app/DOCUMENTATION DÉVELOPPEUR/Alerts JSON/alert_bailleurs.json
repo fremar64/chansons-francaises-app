@@ -1,0 +1,4 @@
+{
+  "title": "Alerte Bailleurs - Progression",
+  "condition": "mean_score_delta < 5 or rate_b2 < 0.25"
+}

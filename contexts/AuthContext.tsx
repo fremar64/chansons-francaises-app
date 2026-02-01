@@ -31,20 +31,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Initialiser l'authentification au chargement
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // Si un token valide existe, tenter un refresh
         if (pb.authStore.isValid) {
           const refreshedUser = await refreshAuth();
           setUser(refreshedUser);
         } else if (pb.authStore.model) {
-          // Si un modèle est présent (cache), l'utiliser comme fallback
           setUser(pb.authStore.model as unknown as User);
         }
       } catch (error) {
-        console.error('Erreur lors de l\'initialisation de l\'authentification:', error);
+        console.error('Erreur initialisation authentification:', error);
         try { pb.authStore.clear(); } catch {};
       } finally {
         setIsLoading(false);
@@ -53,7 +50,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initAuth();
 
-    // Écouter les changements d'authentification
     const unsubscribe = pb.authStore.onChange((_, model) => {
       setUser(model as User | null);
     });
@@ -68,19 +64,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const loggedInUser = await pbLogin(email, password);
 
-      // S'assurer que PocketBase a bien stocké le token
       if (!pb.authStore.isValid) {
-        // tenter un refresh pour diagnostiquer
         await refreshAuth();
         if (!pb.authStore.isValid) {
           throw new Error('Authentification invalide : le token n\'a pas été conservé.');
         }
       }
 
-      // Les admins peuvent se connecter sans validation
-      // Les autres utilisateurs doivent être validés
       if (loggedInUser.role !== 'admin' && !loggedInUser.isValidated) {
-        // Déloguer localement pour éviter état incohérent
         try { pb.authStore.clear(); } catch {};
         throw new Error("Votre compte n'a pas encore été validé par un administrateur.");
       }
@@ -158,7 +149,6 @@ export function useAuth() {
   return context;
 }
 
-// Hook pour vérifier si l'utilisateur a accès à un niveau spécifique
 export function useCanAccessLevel(requiredLevel: User['niveau_actuel']) {
   const { user } = useAuth();
   
@@ -169,11 +159,9 @@ export function useCanAccessLevel(requiredLevel: User['niveau_actuel']) {
   const userLevelIndex = levelOrder.indexOf(user.niveau_actuel);
   const requiredLevelIndex = levelOrder.indexOf(requiredLevel);
   
-  // L'utilisateur peut accéder à son niveau et aux niveaux inférieurs
   return userLevelIndex >= requiredLevelIndex;
 }
 
-// Hook pour obtenir le progrès global de l'utilisateur
 export function useUserStats() {
   const { user } = useAuth();
   const [stats, setStats] = useState({
@@ -204,8 +192,6 @@ export function useUserStats() {
           progressions.items.reduce((sum, p) => sum + (p.temps_passe || 0), 0) / 60
         );
 
-        // Calculer la série de jours (simplifié)
-        // TODO: Implémenter le calcul réel basé sur les dates
         const serieJours = seancesTerminees > 0 ? 1 : 0;
 
         setStats({
@@ -216,7 +202,7 @@ export function useUserStats() {
           serieJours,
         });
       } catch (error) {
-        console.error('Erreur lors du chargement des statistiques:', error);
+        console.error('Erreur chargement statistiques:', error);
       } finally {
         setIsLoading(false);
       }

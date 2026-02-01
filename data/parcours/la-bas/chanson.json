@@ -1,0 +1,38 @@
+{
+  "titre": "Là-bas",
+  "artiste": "Jean-Jacques Goldman (duo avec Sirima)",
+  "album": "Entre gris clair et gris foncé",
+  "annee": 1987,
+  "duree": 280,
+  "genre": ["pop", "chanson française", "chanson engagée", "chanson philosophique"],
+  "niveau": "B2",
+  "type_texte": "argumentatif",
+  "themes": [
+    "déterminisme social",
+    "liberté conquise",
+    "émigration existentielle",
+    "courage métaphysique",
+    "dilemme tragique (amour vs liberté)",
+    "transformation intérieure",
+    "authenticité",
+    "reproduction sociale",
+    "expérience métaphysique limite",
+    "langage symbolique"
+  ],
+  "paroles": "Là-bas\nTout est neuf et tout est sauvage\nLibre continent sans grillage\nIci, nos rêves sont étroits\nC'est pour ça que j'irai là-bas\n\nLà-bas\nFaut du cœur et faut du courage\nMais tout est possible à mon âge\nSi tu as la force et la foi\nL'or est à portée de tes doigts\nC'est pour ça que j'irai là-bas\n\nN'y va pas\nY'a des tempêtes et des naufrages\nLe feu, les diables et les mirages\nJe te sais si fragile parfois\nReste au creux de moi\n\nOn a tant d'amour à faire\nTant de bonheur à venir\nJe te veux mari et père\nEt toi, tu rêves de partir\n\nIci, tout est joué d'avance\nEt l'on n'y peut rien changer\nTout dépend de ta naissance\nEt moi je ne suis pas bien né\n\nLà-bas\nLoin de nos vies, de nos villages\nJ'oublierai ta voix, ton visage\nJ'ai beau te serrer dans mes bras\nTu m'échappes déjà, là-bas\n\nJ'aurai ma chance, j'aurai mes droits\nN'y va pas\nEt la fierté qu'ici je n'ai pas\nLà-bas\nTout ce que tu mérites est à toi\nN'y va pas\nIci, les autres imposent leur loi\nLà-bas\n\nJe te perdrai peut-être là-bas\nN'y va pas\nMais je me perds si je reste là\nLà-bas\nLa vie ne m'a pas laissé le choix\nN'y va pas\nToi et moi, ce sera là-bas ou pas\n\nLà-bas\nTout est neuf et tout est sauvage",
+  "vocabulaire_cle": {
+    "là-bas": "SYMBOLE : Espace de transformation existentielle, décentrement ontologique, non géographique. Exemple: 'Là-bas' représente la possibilité d'échapper au déterminisme social par une transformation intérieure. Notes: LANGAGE SYMBOLIQUE : Répété 15 fois dans la chanson.",
+    "tempêtes": "SYMBOLE : Bouleversements ontologiques violents qui détruisent tous les repères familiers. Exemple: Les tempêtes métaphysiques : quand tout ce qui semblait stable s'effondre. Notes: Les tempêtes ne sont PAS des événements météorologiques mais l'expérience intérieure du CHAOS.",
+    "naufrages": "SYMBOLE : Destruction totale de l'identité, dissolution de l'être. Exemple: Le naufrage existentiel : ne plus savoir qui on est. Notes: Le naufrage n'est PAS l'échec social mais la DISSOLUTION DE L'IDENTITÉ.",
+    "feu": "SYMBOLE : Énergie AMBIVALENTE, à la fois destructrice ET purificatrice. Exemple: Le feu de la métamorphose : il peut purifier l'âme OU la consumer. Notes: Le feu possède une DOUBLE NATURE - il détruit ET purifie.",
+    "diables": "SYMBOLE : Puissances destructrices INTÉRIEURES. Exemple: Les diables : forces obscures de la psyché. Notes: Les diables ne sont PAS des entités surnaturelles mais les FORCES DESTRUCTRICES internes.",
+    "mirages": "SYMBOLE : Expérience métaphysique RADICALE où toutes les évidences deviennent inconsistantes. Exemple: Les mirages : moment où l'on ne sait plus ce qui est réel. Notes: INVERSION RADICALE - ce n'est PAS le là-bas est une illusion MAIS là-bas, on découvre que TOUT était mirage."
+  },
+  "points_grammaire": [
+    "Futur simple de la volonté et de la projection existentielle: Le futur simple exprime ici une DÉCISION, une projection volontaire. Contexte philosophique: Sartre : L'existence précède l'essence. Le futur n'est pas donné mais à faire.",
+    "Impératif négatif : N'y va pas: L'impératif négatif exprime une injonction. Répété 8 fois, il structure le dialogue comme un conflit entre liberté et attachement.",
+    "Opposition ici / là-bas: Cette opposition n'est PAS géographique mais ontologique. Ici/là-bas = authenticité/inauthenticité. Contexte philosophique: Heidegger : être-au-monde authentique vs quotidienneté."
+  ],
+  "contexte_culturel": "Jean-Jacques Goldman (né en 1951) est l'un des auteurs-compositeurs-interprètes majeurs de la chanson française. Là-bas (1987, album Entre gris clair et gris foncé), interprétée en duo avec Sirima, est l'une de ses œuvres les plus profondes philosophiquement. Cette chanson n'est pas une simple évocation de l'émigration géographique, mais une réflexion métaphysique sur la liberté, le déterminisme social et le prix de l'authenticité. Goldman n'est pas un simple auteur de variété mais un ARTISTE SPIRITUEL qui pense en profondeur la condition humaine. La chanson est structurée comme un dialogue argumenté entre deux voix : LUI (Goldman) exprime l'arrachement métaphysique, le refus du déterminisme social ; ELLE (Sirima) exprime l'ancrage dans le familier, la peur légitime de l'expérience métaphysique limite. Le champ sémantique tempêtes/naufrages/feu/diables/mirages forme un ensemble cohérent décrivant les dangers réels de la transformation ontologique que représente le voyage là-bas.",
+  "actif": true
+}

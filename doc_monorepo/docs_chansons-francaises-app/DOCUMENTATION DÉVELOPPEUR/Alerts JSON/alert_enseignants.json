@@ -1,0 +1,4 @@
+{
+  "title": "Alerte Enseignants - Classe",
+  "condition": "avg_ceredis < 350"
+}
