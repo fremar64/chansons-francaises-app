@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Music, Mail, Lock, User, Globe, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 const NIVEAUX = [
   { value: 'A1', label: 'A1 - Débutant' },
@@ -36,16 +37,22 @@ const LANGUES = [
 ];
 
 export default function RegisterPage() {
-    const [adminExists, setAdminExists] = useState<boolean>(false);
-    React.useEffect(() => {
-      // Vérifie s'il existe déjà un compte admin
-      fetch(`${process.env.NEXT_PUBLIC_POCKETBASE_URL || 'https://pocketbase-songs.ceredis.net'}/api/collections/users/records?filter=role="admin"`)
-        .then(res => res.json())
-        .then(data => {
-          setAdminExists((data?.totalItems || 0) > 0);
-        })
-        .catch(() => setAdminExists(false));
-    }, []);
+  const [adminExists, setAdminExists] = useState<boolean>(false);
+  
+  React.useEffect(() => {
+    // Vérifier s'il existe déjà un compte admin via Supabase
+    const checkAdmin = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('role', 'admin')
+        .limit(1);
+      
+      setAdminExists((data?.length || 0) > 0);
+    };
+    checkAdmin();
+  }, []);
   const router = useRouter();
   const { register, isLoading } = useAuth();
 
@@ -124,27 +131,23 @@ export default function RegisterPage() {
 
     try {
       await register(formData);
-      router.push('/');
+      // Rediriger vers login après inscription réussie
+      router.push('/login?registered=true');
     } catch (err: unknown) {
       console.error('Erreur d\'inscription:', err);
       setRawError(err);
-      // Gestion explicite de l'erreur admin
-      if (err instanceof Error && err.message.includes('Un compte administrateur existe déjà')) {
-        setError("Un compte administrateur existe déjà. Impossible d'en créer un second.");
-      } else if (err && typeof err === 'object' && 'data' in err) {
-        const pbError = err as { data?: { data?: Record<string, { message?: string }> }, message?: string };
-        const errorData = pbError.data?.data;
-        if (errorData?.email?.message) {
+      
+      // Gestion explicite des erreurs Supabase
+      if (err instanceof Error) {
+        if (err.message.includes('Un compte administrateur existe déjà')) {
+          setError("Un compte administrateur existe déjà. Impossible d'en créer un second.");
+        } else if (err.message.includes('User already registered')) {
           setError('Cet email est déjà utilisé');
-        } else if (errorData?.username?.message) {
+        } else if (err.message.includes('duplicate key')) {
           setError('Ce nom d\'utilisateur est déjà pris');
-        } else if (pbError.message) {
-          setError('Erreur PocketBase : ' + pbError.message);
         } else {
-          setError('Erreur lors de l\'inscription. Veuillez réessayer.');
+          setError('Erreur : ' + err.message);
         }
-      } else if (err instanceof Error && err.message) {
-        setError('Erreur : ' + err.message);
       } else {
         setError('Erreur lors de l\'inscription. Veuillez réessayer.');
       }

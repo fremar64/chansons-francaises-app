@@ -14,15 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { pb } from "@/lib/pocketbase";
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
 
-  // Obtenir l'URL de l'avatar si disponible
-  const avatarUrl = user?.avatar
-    ? pb.files.getURL(user, user.avatar, { thumb: '100x100' })
-    : undefined;
+  // Obtenir l'URL de l'avatar depuis Supabase Storage
+  const avatarUrl = user?.avatar_url || undefined;
 
   // Obtenir les initiales pour le fallback de l'avatar
   const getInitials = (name: string) => {

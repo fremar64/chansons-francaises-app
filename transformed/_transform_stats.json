@@ -1,0 +1,11 @@
+{
+  "transformedAt": "2026-02-01T20:43:53.407Z",
+  "mapping": {
+    "users → profiles": 1,
+    "evidences → evidences": 0,
+    "progression → activities": 0,
+    "chansons (reference)": 4,
+    "seances (reference)": 27
+  },
+  "totalRecords": 32
+}

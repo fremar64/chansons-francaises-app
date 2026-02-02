@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { pb, Chanson as PBChanson, getChansons, createSlug } from '@/lib/pocketbase';
-import { Chanson as MockChanson } from '@/data/mockSongs';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
 // Import des données de parcours locaux
 import cestTaChanceParcours from '@/data/parcours/cest-ta-chance';
@@ -81,8 +82,34 @@ const LOCAL_PARCOURS_DATA: ChansonDisplay[] = [
   }
 ];
 
-// Convertit une chanson PocketBase vers le format d'affichage
-function convertPBToDisplay(chanson: PBChanson, seanceCount: number = 0): ChansonDisplay {
+// Fonction pour créer un slug à partir d'un titre
+function createSlug(titre: string): string {
+  return titre
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Type pour une chanson Supabase (si table existe)
+interface SupabaseChanson {
+  id: string;
+  titre: string;
+  artiste: string;
+  album?: string;
+  annee?: number;
+  genre?: string[];
+  cover_url?: string;
+  audio_url?: string;
+  niveau: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+  themes?: string[];
+  duree: number;
+  points_grammaire?: any[];
+}
+
+// Convertit une chanson Supabase vers le format d'affichage
+function convertSupabaseToDisplay(chanson: SupabaseChanson, seanceCount: number = 0): ChansonDisplay {
   // Convertir points_grammaire en strings si ce sont des objets
   let competences: string[] = [];
   if (chanson.points_grammaire) {
@@ -108,123 +135,38 @@ function convertPBToDisplay(chanson: PBChanson, seanceCount: number = 0): Chanso
     pochette: chanson.cover_url || `https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop`,
     audioUrl: chanson.audio_url,
     niveauCECRL: chanson.niveau,
-    typeTexte: 'poétique', // Par défaut pour les chansons
+    typeTexte: 'narratif', // Valeur par défaut
     thematiques: chanson.themes || [],
     duree: chanson.duree,
     nombreSeances: seanceCount,
-    competencesCibles: competences,
+    competencesCibles: competences
   };
 }
 
-export interface UseChansonsOptions {
-  niveau?: string | null;
-  genre?: string | null;
-  theme?: string | null;
-  search?: string;
-}
-
-export interface UseChansonsResult {
-  chansons: ChansonDisplay[];
-  loading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-}
-
-export function useChansons(options: UseChansonsOptions = {}): UseChansonsResult {
-  const [chansons, setChansons] = useState<ChansonDisplay[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchChansons = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Commencer avec les données locales
-      let allChansons: ChansonDisplay[] = [...LOCAL_PARCOURS_DATA];
-      const localSlugs = new Set(LOCAL_PARCOURS_DATA.map(c => c.slug));
-
-      // Essayer de charger depuis PocketBase et fusionner
-      try {
-        const result = await getChansons({
-          niveau: options.niveau || undefined,
-          genre: options.genre || undefined,
-          theme: options.theme || undefined,
-          search: options.search,
-        });
-
-        if (result.items.length > 0) {
-          // Récupérer le nombre de séances pour chaque chanson PocketBase
-          const pbChansons = await Promise.all(
-            result.items.map(async (chanson) => {
-              try {
-                const seances = await pb.collection('seances').getList(1, 1, {
-                  filter: `chanson = "${chanson.id}" && actif = true`,
-                });
-                return convertPBToDisplay(chanson, seances.totalItems);
-              } catch {
-                return convertPBToDisplay(chanson, 0);
-              }
-            })
-          );
-
-          // Fusionner : remplacer les données locales par PocketBase si même slug
-          // et ajouter les chansons PocketBase qui n'existent pas localement
-          allChansons = LOCAL_PARCOURS_DATA.map(local => {
-            const pbVersion = pbChansons.find(pb => pb.slug === local.slug);
-            return pbVersion || local;
-          });
-
-          // Ajouter les chansons PocketBase qui n'existent pas dans les données locales
-          pbChansons.forEach(pb => {
-            if (!localSlugs.has(pb.slug)) {
-              allChansons.push(pb);
-            }
-          });
-        }
-      } catch (pbError) {
-        console.log('PocketBase non disponible, utilisation des données locales uniquement');
-      }
-
-      // Appliquer les filtres si nécessaire
-      if (options.niveau) {
-        allChansons = allChansons.filter(c => c.niveauCECRL === options.niveau);
-      }
-      if (options.search) {
-        const searchLower = options.search.toLowerCase();
-        allChansons = allChansons.filter(c => 
-          c.titre.toLowerCase().includes(searchLower) ||
-          c.artiste.toLowerCase().includes(searchLower) ||
-          c.thematiques.some(t => t.toLowerCase().includes(searchLower))
-        );
-      }
-
-      setChansons(allChansons);
-    } catch (err) {
-      console.error('Erreur lors du chargement des chansons:', err);
-      setError(err instanceof Error ? err : new Error('Erreur inconnue'));
-      // En cas d'erreur, toujours fournir les données locales
-      setChansons(LOCAL_PARCOURS_DATA);
-    } finally {
-      setLoading(false);
-    }
-  }, [options.niveau, options.genre, options.theme, options.search]);
+/**
+ * Hook pour charger et gérer la liste des chansons
+ * Utilise les données locales par défaut (TODO: fusionner avec Supabase si table chansons existe)
+ */
+export function useChansons() {
+  const [chansons, setChansons] = useState<ChansonDisplay[]>(LOCAL_PARCOURS_DATA);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchChansons();
-  }, [fetchChansons]);
+    // Pour l'instant, on utilise uniquement les données locales
+    // TODO: Implémenter la fusion avec Supabase quand la table chansons sera créée
+    setChansons(LOCAL_PARCOURS_DATA);
+  }, []);
 
-  return {
-    chansons,
-    loading,
-    error,
-    refetch: fetchChansons,
-  };
+  return { chansons, loading, error };
 }
 
-// Hook pour récupérer une chanson spécifique avec ses séances
+/**
+ * Hook pour charger une chanson spécifique par son ID
+ * @param id - L'ID de la chanson
+ */
 export function useChanson(id: string) {
-  const [chanson, setChanson] = useState<PBChanson | null>(null);
+  const [chanson, setChanson] = useState<SupabaseChanson | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -233,8 +175,10 @@ export function useChanson(id: string) {
       try {
         setLoading(true);
         setError(null);
-        const result = await pb.collection('chansons').getOne<PBChanson>(id);
-        setChanson(result);
+        
+        // TODO: Adapter selon le schéma Supabase si la table chansons existe
+        // Pour l'instant, retourner null car la table n'existe pas encore
+        setChanson(null);
       } catch (err) {
         console.error('Erreur lors du chargement de la chanson:', err);
         setError(err instanceof Error ? err : new Error('Erreur inconnue'));

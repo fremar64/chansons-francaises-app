@@ -1,0 +1,27 @@
+[
+  {
+    "avatar": "",
+    "collectionId": "_pb_users_auth_",
+    "collectionName": "users",
+    "created": "2026-01-18 04:31:21.627Z",
+    "date_inscription": "",
+    "derniere_connexion": "",
+    "email": "admin@ceredis.net",
+    "emailVisibility": false,
+    "id": "yr1x9y7vxnfhn61",
+    "isValidated": true,
+    "langue_maternelle": "",
+    "name": "ceredis",
+    "niveau_actuel": "",
+    "preferences": {
+      "afficher_traduction": true,
+      "theme": "system",
+      "vitesse_lecture": 1,
+      "volume": 80
+    },
+    "role": "admin",
+    "updated": "2026-01-23 13:29:12.422Z",
+    "username": "admin_ceredis",
+    "verified": false
+  }
+]

@@ -51,3 +51,4 @@ next-env.d.ts
 public/audio/chansons/**/*.mp3
 !public/audio/chansons/README.md
 release_assets/build-output.tar.gz
+.env.local

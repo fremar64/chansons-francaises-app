@@ -1,65 +1,32 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import PocketBase from "pocketbase";
+/**
+ * API Auth - Migration Supabase
+ * 
+ * NOTE: Cette route n'est plus nécessaire avec Supabase Auth.
+ * L'authentification se fait directement via les clients Supabase :
+ * 
+ * - Login : supabase.auth.signInWithPassword({ email, password })
+ * - Signup : supabase.auth.signUp({ email, password, options: { data: { role, name } } })
+ * - Logout : supabase.auth.signOut()
+ * - Session : supabase.auth.getUser()
+ * 
+ * Les pages login/register doivent être migrées pour utiliser Supabase Auth directement.
+ * Cette route est conservée pour compatibilité temporaire mais ne sera plus utilisée.
+ * 
+ * TODO: Supprimer cette route après migration complète des pages login/register.
+ */
 
-const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
+import { NextResponse } from 'next/server';
 
-export const authOptions = {
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "email", placeholder: "email@example.com" },
-        password: { label: "Mot de passe", type: "password" },
-        role: { label: "Rôle", type: "text", placeholder: "student|teacher" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password || !credentials?.role) return null;
-        try {
-          // Authentifier via PocketBase (collection students ou teachers)
-          const collection = credentials.role === "teacher" ? "teachers" : "students";
-          const user = await pb.collection(collection).authWithPassword(
-            credentials.email,
-            credentials.password
-          );
-          if (user) {
-            return {
-              id: user.record.id,
-              email: user.record.email,
-              name: user.record.name,
-              role: user.record.role, // récupère le vrai champ role
-            };
-          }
-        } catch (e) {
-          return null;
-        }
-        return null;
-      },
-    }),
-  ],
-  session: {
-    strategy: "jwt" as const,
-  },
-  callbacks: {
-    async jwt({ token, user }: { token: any; user?: any }) {
-      if (user) {
-        token.role = user.role;
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }: { session: any; token: any }) {
-      if (token) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: "/login",
-  },
-};
+export async function GET() {
+  return NextResponse.json({ 
+    error: 'NextAuth removed - use Supabase Auth directly',
+    message: 'Authentication migrated to Supabase Auth. Use supabase.auth methods in client code.'
+  }, { status: 410 }); // 410 Gone
+}
 
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+export async function POST() {
+  return NextResponse.json({ 
+    error: 'NextAuth removed - use Supabase Auth directly',
+    message: 'Authentication migrated to Supabase Auth. Use supabase.auth methods in client code.'
+  }, { status: 410 }); // 410 Gone
+}

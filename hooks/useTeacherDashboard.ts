@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { pb } from '@/lib/pocketbase';
+import { createClient } from '@/lib/supabase/client';
 import { COMPETENCES_CEREDIS } from '@/services/integration/types';
 import type {
   SyntheseEleve,
@@ -327,7 +327,11 @@ export function useTeacherDashboard() {
 
     try {
       // Pour le moment, utiliser les données mock
-      // TODO: Remplacer par appels réels à PocketBase/CaSS
+      // TODO: Remplacer par appels réels à Supabase:
+      // const supabase = createClient();
+      // const { data: profiles } = await supabase.from('profiles').select('*').eq('role', 'student');
+      // const { data: activities } = await supabase.from('activities').select('*');
+      // const { data: scores } = await supabase.from('ceredis_scores').select('*');
       
       const mockEleves = generateMockEleves();
       const mockStats = calculateMockStatistiques(mockEleves);

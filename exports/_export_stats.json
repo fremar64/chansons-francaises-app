@@ -1,0 +1,15 @@
+{
+  "exportedAt": "2026-02-01T20:39:07.762Z",
+  "pocketbaseUrl": "https://pocketbase-songs.ceredis.net",
+  "collections": {
+    "users": 1,
+    "chansons": 4,
+    "seances": 27,
+    "evidences": 0,
+    "progression": 0,
+    "competences": 0,
+    "evaluations_competences": 0,
+    "reponses": 0
+  },
+  "totalRecords": 32
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { pb } from '@/lib/pocketbase';
+import { createClient } from '@/lib/supabase/client';
 import { calculateUserScore } from '@/lib/ceredis/client';
 
 export interface DashboardStats {
@@ -55,20 +55,33 @@ export function useDashboard(): DashboardStats {
       }
 
       try {
-        // 1. Charger les progressions (si la collection existe)
+        // 1. Charger les activités (migration Supabase)
+        const supabase = createClient();
         let progressions: any[] = [];
         try {
-          progressions = await pb.collection('progression').getFullList({
-            filter: `user = "${user.id}"`,
-            sort: '-updated',
-            expand: 'seance',
-          });
+          const { data: activities, error } = await supabase
+            .from('activities')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('updated_at', { ascending: false });
+
+          if (error) throw error;
+          
+          // Mapper les activités Supabase vers le format progression
+          progressions = (activities || []).map((a: any) => ({
+            id: a.id,
+            user: a.user_id,
+            seance_id: a.seance_id,
+            statut: a.completed_at ? 'termine' : 'en_cours',
+            score_total: a.score_total || 0,
+            score_max: a.score_max || 0,
+            temps_passe: a.time_spent || 0,
+            updated: a.updated_at,
+            created: a.created_at,
+          }));
         } catch (progressionError: any) {
-          // Collection progression n'existe pas encore ou pas de données
-          // Ce n'est pas une erreur critique, continuer avec tableau vide
-          if (progressionError?.status !== 404 && progressionError?.status !== 400) {
-            throw progressionError;
-          }
+          // Pas de données disponibles, continuer avec tableau vide
+          console.warn('Activities query failed:', progressionError);
         }
 
         // 2. Calculer les statistiques de base
@@ -90,15 +103,17 @@ export function useDashboard(): DashboardStats {
         // 3. Charger les evidences pour calcul des domaines
         let evidences: any[] = [];
         try {
-          evidences = await pb.collection('evidences').getFullList({
-            filter: `user = "${user.id}"`,
-            sort: '-created',
-          });
+          const { data, error } = await supabase
+            .from('evidences')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+
+          if (error) throw error;
+          evidences = data || [];
         } catch (evidenceError: any) {
-          // Collection evidences n'existe pas encore ou pas de données
-          if (evidenceError?.status !== 404 && evidenceError?.status !== 400) {
-            throw evidenceError;
-          }
+          // Pas de données disponibles, continuer avec tableau vide
+          console.warn('Evidences query failed:', evidenceError);
         }
 
         // 4. Calculer les scores par domaine

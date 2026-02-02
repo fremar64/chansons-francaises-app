@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { pb } from '@/services/pocketbase/client';
+import { createClient } from '@/lib/supabase/server';
 
 function getCecrlLevel(avgScore: number): string {
   if (avgScore >= 90) return 'B2';
@@ -21,11 +21,16 @@ function toCSV(rows: any[]): string {
 export async function GET(req: NextRequest) {
   try {
     const format = req.nextUrl.searchParams.get('format') || 'csv';
-    const progressions = await pb.collection('progression').getFullList(200, {
-      expand: 'user',
-      sort: '-updated',
-    });
-    if (!progressions || progressions.length === 0) {
+    const supabase = await createClient();
+
+    // Récupérer toutes les activités avec tri par date
+    const { data: activities, error } = await supabase
+      .from('activities')
+      .select('*')
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase query error:', error);
       if (format === 'json') {
         return NextResponse.json({ students: [] });
       } else {
@@ -37,6 +42,30 @@ export async function GET(req: NextRequest) {
         });
       }
     }
+
+    if (!activities || activities.length === 0) {
+      if (format === 'json') {
+        return NextResponse.json({ students: [] });
+      } else {
+        return new NextResponse('', {
+          headers: {
+            'Content-Type': 'text/csv',
+            'Content-Disposition': 'attachment; filename="analytics_teacher.csv"',
+          },
+        });
+      }
+    }
+
+    // Récupérer les utilisateurs uniques
+    const userIds = [...new Set(activities.map(a => a.user_id))];
+    const { data: users } = await supabase
+      .from('profiles')
+      .select('id, name, username')
+      .in('id', userIds);
+
+    const userMap = new Map(users?.map(u => [u.id, u]) || []);
+
+    // Agréger par élève
     const statsByUser: Record<string, {
       userId: string;
       userName: string;
@@ -44,9 +73,12 @@ export async function GET(req: NextRequest) {
       totalScore: number;
       totalScoreMax: number;
     }> = {};
-    for (const p of progressions) {
-      const userId = p.user;
-      const userName = p.expand?.user?.name || p.expand?.user?.username || 'Élève';
+
+    for (const activity of activities) {
+      const userId = activity.user_id;
+      const user = userMap.get(userId);
+      const userName = user?.name || user?.username || 'Élève';
+      
       if (!statsByUser[userId]) {
         statsByUser[userId] = {
           userId,
@@ -57,9 +89,10 @@ export async function GET(req: NextRequest) {
         };
       }
       statsByUser[userId].totalActivities += 1;
-      statsByUser[userId].totalScore += p.score_total || 0;
-      statsByUser[userId].totalScoreMax += p.score_max || 0;
+      statsByUser[userId].totalScore += activity.score_total || 0;
+      statsByUser[userId].totalScoreMax += activity.score_max || 0;
     }
+
     const students = Object.values(statsByUser).map(s => {
       const avgScore = s.totalScoreMax > 0 ? Math.round((s.totalScore / s.totalScoreMax) * 100) : 0;
       return {
@@ -70,6 +103,7 @@ export async function GET(req: NextRequest) {
         cecrlLevel: getCecrlLevel(avgScore),
       };
     });
+
     if (format === 'json') {
       return NextResponse.json({ students });
     } else {
@@ -82,6 +116,7 @@ export async function GET(req: NextRequest) {
       });
     }
   } catch (e: any) {
+    console.error('Analytics export error:', e);
     if (req.nextUrl.searchParams.get('format') === 'json') {
       return NextResponse.json({ students: [] });
     } else {

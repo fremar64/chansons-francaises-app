@@ -206,15 +206,15 @@ function DashboardContent() {
                     <div>
                       <span className="font-medium">Compte créé:</span>{' '}
                       <span className="text-muted-foreground">
-                        {user?.created
-                          ? new Date(user.created).toLocaleDateString('fr-FR')
+                        {user?.created_at
+                          ? new Date(user.created_at).toLocaleDateString('fr-FR')
                           : 'Inconnu'}
                       </span>
                     </div>
                     <div>
                       <span className="font-medium">Validé:</span>{' '}
                       <span className="text-muted-foreground">
-                        {user?.isValidated ? '✅ Oui' : '❌ Non'}
+                        {user?.is_validated ? '✅ Oui' : '❌ Non'}
                       </span>
                     </div>
                   </div>

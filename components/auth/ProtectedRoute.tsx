@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-import { pb } from '@/lib/pocketbase';
+import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -13,8 +13,8 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, requiredLevel }: ProtectedRouteProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const [isClient, setIsClient] = useState(false);
-  const [isAuthorized, setIsAuthorized] = useState(false);
 
   // ÉTAPE 1: Attendre d'être côté client
   useEffect(() => {
@@ -23,19 +23,16 @@ export function ProtectedRoute({ children, requiredLevel }: ProtectedRouteProps)
 
   // ÉTAPE 2: Une fois côté client, vérifier l'auth
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient || isLoading) return;
     
-    if (!pb.authStore.isValid) {
+    if (!isAuthenticated) {
       const redirectPath = pathname ?? '/';
       router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`);
-      setIsAuthorized(false);
-    } else {
-      setIsAuthorized(true);
     }
-  }, [isClient, router, pathname]);
+  }, [isClient, isAuthenticated, isLoading, router, pathname]);
 
   // Pendant le SSR ou avant le montage client : afficher un loader
-  if (!isClient) {
+  if (!isClient || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -46,20 +43,20 @@ export function ProtectedRoute({ children, requiredLevel }: ProtectedRouteProps)
     );
   }
 
-  // Côté client mais pas encore autorisé
-  if (!isAuthorized) {
+  // Côté client mais pas encore authentifié
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-accent mx-auto" />
-          <p className="mt-4 text-muted-foreground">Vérification...</p>
+          <p className="mt-4 text-muted-foreground">Redirection...</p>
         </div>
       </div>
     );
   }
 
-  // Autorisé : afficher le contenu
-  return <>{children}</>;
+  // Authentifié : afficher le contenu
+  return <>{children}</>
 }
 
 // Composant pour les routes réservées aux non-connectés
@@ -70,25 +67,22 @@ interface GuestRouteProps {
 
 export function GuestRoute({ children, redirectTo = '/dashboard' }: GuestRouteProps) {
   const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuth();
   const [isClient, setIsClient] = useState(false);
-  const [canRender, setCanRender] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient || isLoading) return;
     
-    if (pb.authStore.isValid) {
+    if (isAuthenticated) {
       router.push(redirectTo);
-      setCanRender(false);
-    } else {
-      setCanRender(true);
     }
-  }, [isClient, router, redirectTo]);
+  }, [isClient, isAuthenticated, isLoading, router, redirectTo]);
 
-  if (!isClient || !canRender) {
+  if (!isClient || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -97,6 +91,10 @@ export function GuestRoute({ children, redirectTo = '/dashboard' }: GuestRoutePr
         </div>
       </div>
     );
+  }
+
+  if (isAuthenticated) {
+    return null;
   }
 
   return <>{children}</>;

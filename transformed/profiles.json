@@ -1,0 +1,19 @@
+[
+  {
+    "id": "yr1x9y7vxnfhn61",
+    "name": "ceredis",
+    "username": "admin_ceredis",
+    "email": "admin@ceredis.net",
+    "role": "admin",
+    "is_validated": true,
+    "avatar_url": null,
+    "metadata": {
+      "afficher_traduction": true,
+      "theme": "system",
+      "vitesse_lecture": 1,
+      "volume": 80
+    },
+    "created_at": "2026-01-18 04:31:21.627Z",
+    "updated_at": "2026-01-23 13:29:12.422Z"
+  }
+]

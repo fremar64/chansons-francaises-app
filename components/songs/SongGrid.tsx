@@ -14,18 +14,31 @@ export function SongGrid() {
     typeTexte: null,
   });
 
-  // Récupérer les chansons depuis PocketBase
-  const { chansons, loading, error } = useChansons({
-    niveau: filters.niveau,
-    genre: filters.genre,
-    theme: filters.thematique,
-  });
+  // Récupérer les chansons (données locales pour l'instant)
+  const { chansons, loading, error } = useChansons();
 
-  // Filtrer localement par typeTexte (pas dans PocketBase)
+  // Filtrer localement selon tous les critères
   const filteredSongs = useMemo(() => {
-    if (!filters.typeTexte) return chansons;
-    return chansons.filter((song) => song.typeTexte === filters.typeTexte);
-  }, [chansons, filters.typeTexte]);
+    let filtered = chansons;
+    
+    if (filters.niveau) {
+      filtered = filtered.filter((song) => song.niveauCECRL === filters.niveau);
+    }
+    
+    if (filters.genre) {
+      filtered = filtered.filter((song) => song.genre.includes(filters.genre!));
+    }
+    
+    if (filters.thematique) {
+      filtered = filtered.filter((song) => song.thematiques.includes(filters.thematique!));
+    }
+    
+    if (filters.typeTexte) {
+      filtered = filtered.filter((song) => song.typeTexte === filters.typeTexte);
+    }
+    
+    return filtered;
+  }, [chansons, filters]);
 
   // État de chargement
   if (loading) {

@@ -1,0 +1,20 @@
+{
+  "importedAt": "2026-02-01T20:46:25.677Z",
+  "supabaseUrl": "https://enaa-supabase.ceredis.net",
+  "collections": {
+    "profiles": {
+      "imported": 1,
+      "errors": 0
+    },
+    "evidences": {
+      "imported": 0,
+      "errors": 0
+    },
+    "activities": {
+      "imported": 0,
+      "errors": 0
+    }
+  },
+  "totalImported": 1,
+  "totalErrors": 0
+}

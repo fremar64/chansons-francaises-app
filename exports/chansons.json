@@ -1,0 +1,1037 @@
+[
+  {
+    "album": "Entre gris clair et gris foncé",
+    "annee": 1987,
+    "artiste": "Jean-Jacques Goldman (duo avec Sirima)",
+    "audio_url": "",
+    "collectionId": "pbc_780718777",
+    "collectionName": "chansons",
+    "contexte_culturel": "Jean-Jacques Goldman (né en 1951) est l'un des auteurs-compositeurs-interprètes majeurs de la chanson française. Là-bas (1987, album Entre gris clair et gris foncé), interprétée en duo avec Sirima, est l'une de ses œuvres les plus profondes philosophiquement. Cette chanson n'est pas une simple évocation de l'émigration géographique, mais une réflexion métaphysique sur la liberté, le déterminisme social et le prix de l'authenticité. Goldman n'est pas un simple auteur de variété mais un ARTISTE SPIRITUEL qui pense en profondeur la condition humaine. La chanson est structurée comme un dialogue argumenté entre deux voix : LUI (Goldman) exprime l'arrachement métaphysique, le refus du déterminisme social ; ELLE (Sirima) exprime l'ancrage dans le familier, la peur légitime de l'expérience métaphysique limite. Le champ sémantique tempêtes/naufrages/feu/diables/mirages forme un ensemble cohérent décrivant les dangers réels de la transformation ontologique que représente le voyage là-bas.",
+    "cover_url": "",
+    "duree": 280,
+    "genre": [
+      "pop",
+      "chanson française",
+      "chanson engagée",
+      "chanson philosophique"
+    ],
+    "id": "pidmeza2iggecpc",
+    "niveau": "B2",
+    "paroles": "Là-bas\nTout est neuf et tout est sauvage\nLibre continent sans grillage\nIci, nos rêves sont étroits\nC'est pour ça que j'irai là-bas\n\nLà-bas\nFaut du cœur et faut du courage\nMais tout est possible à mon âge\nSi tu as la force et la foi\nL'or est à portée de tes doigts\nC'est pour ça que j'irai là-bas\n\nN'y va pas\nY'a des tempêtes et des naufrages\nLe feu, les diables et les mirages\nJe te sais si fragile parfois\nReste au creux de moi\n\nOn a tant d'amour à faire\nTant de bonheur à venir\nJe te veux mari et père\nEt toi, tu rêves de partir\n\nIci, tout est joué d'avance\nEt l'on n'y peut rien changer\nTout dépend de ta naissance\nEt moi je ne suis pas bien né\n\nLà-bas\nLoin de nos vies, de nos villages\nJ'oublierai ta voix, ton visage\nJ'ai beau te serrer dans mes bras\nTu m'échappes déjà, là-bas\n\nJ'aurai ma chance, j'aurai mes droits\nN'y va pas\nEt la fierté qu'ici je n'ai pas\nLà-bas\nTout ce que tu mérites est à toi\nN'y va pas\nIci, les autres imposent leur loi\nLà-bas\n\nJe te perdrai peut-être là-bas\nN'y va pas\nMais je me perds si je reste là\nLà-bas\nLa vie ne m'a pas laissé le choix\nN'y va pas\nToi et moi, ce sera là-bas ou pas\n\nLà-bas\nTout est neuf et tout est sauvage",
+    "paroles_synchronisees": [
+      {
+        "temps": 0,
+        "texte": ""
+      },
+      {
+        "temps": 15.2,
+        "texte": "Partir, là-bas, partir"
+      },
+      {
+        "temps": 19.5,
+        "texte": "Sentir, ailleurs, mon cœur"
+      },
+      {
+        "temps": 23.8,
+        "texte": "Partir, là-bas, partir"
+      },
+      {
+        "temps": 28.1,
+        "texte": "Sentir, ailleurs, mon cœur"
+      },
+      {
+        "temps": 32.5,
+        "texte": "Les gens ici n'ont plus de haine"
+      },
+      {
+        "temps": 36.8,
+        "texte": "Ils sont tous pareils"
+      },
+      {
+        "temps": 39.2,
+        "texte": "Ils sont comme endormis"
+      },
+      {
+        "temps": 41.5,
+        "texte": "Ils sont tous pareils"
+      },
+      {
+        "temps": 43.8,
+        "texte": "Ils sont comme endormis"
+      },
+      {
+        "temps": 48.2,
+        "texte": "Partir, là-bas, partir"
+      },
+      {
+        "temps": 52.5,
+        "texte": "Sentir, ailleurs, mon cœur"
+      },
+      {
+        "temps": 56.8,
+        "texte": "Partir, là-bas, partir"
+      },
+      {
+        "temps": 61.1,
+        "texte": "Sentir, ailleurs, mon cœur"
+      },
+      {
+        "temps": 65.5,
+        "texte": "Les gens ici n'ont plus d'envies"
+      },
+      {
+        "temps": 69.8,
+        "texte": "Ils ont peur de tout"
+      },
+      {
+        "temps": 72.1,
+        "texte": "Ils ne savent plus rire"
+      },
+      {
+        "temps": 74.5,
+        "texte": "Ils ont peur de tout"
+      },
+      {
+        "temps": 76.8,
+        "texte": "Ils ne savent plus rire"
+      },
+      {
+        "temps": 81.2,
+        "texte": "Partir, là-bas, partir"
+      },
+      {
+        "temps": 85.5,
+        "texte": "Sentir, ailleurs, mon cœur"
+      },
+      {
+        "temps": 89.8,
+        "texte": "Partir, là-bas, partir"
+      },
+      {
+        "temps": 94.1,
+        "texte": "Sentir, ailleurs, mon cœur"
+      },
+      {
+        "temps": 98.5,
+        "texte": ""
+      },
+      {
+        "temps": 115.2,
+        "texte": "Je veux croire aux rêves d'enfants"
+      },
+      {
+        "temps": 119.5,
+        "texte": "Je veux croire encore"
+      },
+      {
+        "temps": 121.8,
+        "texte": "Je veux croire vraiment"
+      },
+      {
+        "temps": 124.2,
+        "texte": "Je veux croire encore"
+      },
+      {
+        "temps": 126.5,
+        "texte": "Je veux croire vraiment"
+      },
+      {
+        "temps": 130.8,
+        "texte": "Partir, là-bas, partir"
+      },
+      {
+        "temps": 135.1,
+        "texte": "Sentir, ailleurs, mon cœur"
+      },
+      {
+        "temps": 139.5,
+        "texte": "Partir, là-bas, partir"
+      },
+      {
+        "temps": 143.8,
+        "texte": "Sentir, ailleurs, mon cœur"
+      },
+      {
+        "temps": 148.2,
+        "texte": "Là-bas, là-bas"
+      },
+      {
+        "temps": 152.5,
+        "texte": "Ailleurs, ailleurs"
+      },
+      {
+        "temps": 156.8,
+        "texte": "Partir..."
+      },
+      {
+        "temps": 165,
+        "texte": ""
+      }
+    ],
+    "points_grammaire": [
+      "Futur simple de la volonté et de la projection existentielle: Le futur simple exprime ici une DÉCISION, une projection volontaire. Contexte philosophique: Sartre : L'existence précède l'essence. Le futur n'est pas donné mais à faire.",
+      "Impératif négatif : N'y va pas: L'impératif négatif exprime une injonction. Répété 8 fois, il structure le dialogue comme un conflit entre liberté et attachement.",
+      "Opposition ici / là-bas: Cette opposition n'est PAS géographique mais ontologique. Ici/là-bas = authenticité/inauthenticité. Contexte philosophique: Heidegger : être-au-monde authentique vs quotidienneté."
+    ],
+    "themes": [
+      "déterminisme social",
+      "liberté conquise",
+      "émigration existentielle",
+      "courage métaphysique",
+      "dilemme tragique (amour vs liberté)",
+      "transformation intérieure",
+      "authenticité",
+      "reproduction sociale",
+      "expérience métaphysique limite",
+      "langage symbolique"
+    ],
+    "titre": "Là-bas",
+    "video_url": "",
+    "vocabulaire_cle": {
+      "diables": "SYMBOLE : Puissances destructrices INTÉRIEURES. Exemple: Les diables : forces obscures de la psyché. Notes: Les diables ne sont PAS des entités surnaturelles mais les FORCES DESTRUCTRICES internes.",
+      "feu": "SYMBOLE : Énergie AMBIVALENTE, à la fois destructrice ET purificatrice. Exemple: Le feu de la métamorphose : il peut purifier l'âme OU la consumer. Notes: Le feu possède une DOUBLE NATURE - il détruit ET purifie.",
+      "là-bas": "SYMBOLE : Espace de transformation existentielle, décentrement ontologique, non géographique. Exemple: 'Là-bas' représente la possibilité d'échapper au déterminisme social par une transformation intérieure. Notes: LANGAGE SYMBOLIQUE : Répété 15 fois dans la chanson.",
+      "mirages": "SYMBOLE : Expérience métaphysique RADICALE où toutes les évidences deviennent inconsistantes. Exemple: Les mirages : moment où l'on ne sait plus ce qui est réel. Notes: INVERSION RADICALE - ce n'est PAS le là-bas est une illusion MAIS là-bas, on découvre que TOUT était mirage.",
+      "naufrages": "SYMBOLE : Destruction totale de l'identité, dissolution de l'être. Exemple: Le naufrage existentiel : ne plus savoir qui on est. Notes: Le naufrage n'est PAS l'échec social mais la DISSOLUTION DE L'IDENTITÉ.",
+      "tempêtes": "SYMBOLE : Bouleversements ontologiques violents qui détruisent tous les repères familiers. Exemple: Les tempêtes métaphysiques : quand tout ce qui semblait stable s'effondre. Notes: Les tempêtes ne sont PAS des événements météorologiques mais l'expérience intérieure du CHAOS."
+    }
+  },
+  {
+    "album": "Non homologué",
+    "annee": 1985,
+    "artiste": "Jean-Jacques Goldman",
+    "audio_url": "",
+    "collectionId": "pbc_780718777",
+    "collectionName": "chansons",
+    "contexte_culturel": "\n# Contexte culturel et social\n\n## L'artiste et l'œuvre\n\n**Jean-Jacques Goldman** compose \"C'est ta chance\" en 1985 pour l'album \"Non homologué\". Cette chanson s'inscrit dans la tradition de la **chanson sociale française** qui encourage l'émancipation individuelle malgré les déterminismes sociaux.\n\n## Thématiques sociales\n\n### 1. Le déterminisme social (Pierre Bourdieu)\n\nLa chanson combat l'idée que notre origine détermine notre destin. Les sociologues comme **Pierre Bourdieu** ont montré comment le milieu social \"reproduit\" les inégalités :\n- Les enfants d'ouvriers deviennent souvent ouvriers\n- Les enfants de cadres deviennent souvent cadres\n- L'école, au lieu de réduire les inégalités, les reproduit\n\n**Dans la chanson** : \"Ils vont te dire que c'est trop dur pour toi\" = Les voix du déterminisme social qui disent \"reste à ta place\".\n\n### 2. L'émancipation par la volonté\n\nGoldman propose une **vision optimiste** : malgré les obstacles sociaux, l'individu peut s'émanciper par sa **détermination** et son **courage**.\n\n**Message central** : \n- Ton origine ne définit pas ton futur\n- Tu as en toi une force (\"cette force qui brûle\")\n- Il faut oser saisir les opportunités\n\n### 3. La critique des \"gardiens du statu quo\"\n\n\"Ne les écoute pas\" → La chanson identifie des **ennemis invisibles** :\n- Ceux qui doutent de toi\n- Ceux qui te découragent\n- Ceux qui veulent que tu restes \"à ta place\"\n\nCes voix peuvent être :\n- 🏫 L'institution (professeurs défaitistes)\n- 👨‍👩‍👧 La famille (prudence excessive)\n- 🌍 La société (préjugés de classe)\n\n### 4. Le moment décisif : \"C'est maintenant\"\n\n**L'urgence** est un thème clé :\n- \"C'est maintenant\" (répété)\n- \"Prends-la maintenant\"\n- \"Ne la laisse pas passer\"\n\n→ L'opportunité est **temporaire**. Il faut agir **maintenant**, pas demain.\n\n## Contexte des années 80\n\n### Crise économique et chômage\n\nLes années 1980 en France : \n- Crise économique post-chocs pétroliers\n- Montée du chômage (surtout des jeunes)\n- Ascenseur social en panne\n\n**Pourquoi cette chanson ?** Dans ce contexte difficile, Goldman encourage les jeunes à **ne pas renoncer**, à **croire en eux** malgré les difficultés.\n\n### L'individualisme positif\n\nLes années 80 voient aussi l'émergence d'un **individualisme positif** :\n- \"Chacun peut réussir s'il le veut vraiment\"\n- Valorisation de l'entrepreneuriat\n- Culture du \"self-made man\"\n\nGoldman s'inscrit dans ce mouvement tout en restant **humaniste** : ce n'est pas un individualisme égoïste, mais un encouragement à l'**émancipation**.\n\n## Réception et impact\n\nCette chanson a touché particulièrement :\n- 🎓 Les **jeunes** de milieux modestes qui aspirent à \"s'en sortir\"\n- 💼 Les personnes en **reconversion** professionnelle\n- 🌟 Tous ceux qui doutent d'eux-mêmes\n\n**Message universel** : Peu importe ton passé, tu peux créer ton futur.\n\n## Débat contemporain\n\n### Pour : L'émancipation est possible\n- Les exemples de réussite existent\n- La volonté individuelle compte\n- Encourager = donner de l'espoir\n\n### Contre : Les limites du volontarisme\n- Les structures sociales sont puissantes\n- Tous n'ont pas les mêmes opportunités\n- \"Saisir sa chance\" présuppose qu'elle existe\n\n**Position nuancée** : La chanson est utile comme **encouragement** mais ne doit pas faire oublier les **inégalités structurelles** qui persistent.\n",
+    "cover_url": "",
+    "duree": 195,
+    "genre": [
+      "pop",
+      "chanson française",
+      "chanson sociale"
+    ],
+    "id": "78iolh3qjm52pj7",
+    "niveau": "B1",
+    "paroles": "Ne les écoute pas\nCeux qui te disent 'tu n'y arriveras pas'\nNe les regarde pas\nTous ceux qui doutent de toi\nC'est ta chance\nPrends-la maintenant\nIls vont te dire\nQue c'est trop dur pour toi\nQu'il vaut mieux rester\nDans ce que tu connais déjà\nMais c'est ta chance\nNe la laisse pas passer\nC'est ta chance, c'est maintenant\nNe regarde pas en arrière\nC'est ta chance, vas-y, fonce\nTu n'as rien à perdre\nIls ne savent pas\nCe que tu portes en toi\nCette force qui brûle\nEt qui ne demande qu'à jaillir\nAlors vas-y\nMontre-leur ce que tu vaux\nC'est ta chance, c'est maintenant\nNe regarde pas en arrière\nC'est ta chance, vas-y, fonce\nLe monde t'appartient\nPeu importe d'où tu viens\nPeu importe ton passé\nCe qui compte, c'est aujourd'hui\nEt tout ce que tu vas devenir\nC'est ta chance, c'est maintenant\nNe laisse personne te dire non\nC'est ta chance, elle est là\nSaisis-la, elle est à toi\nC'est ta chance...\nC'est maintenant...",
+    "paroles_synchronisees": [
+      {
+        "temps": 0,
+        "texte": ""
+      },
+      {
+        "temps": 12.5,
+        "texte": "Ne les écoute pas"
+      },
+      {
+        "temps": 15.8,
+        "texte": "Ceux qui te disent 'tu n'y arriveras pas'"
+      },
+      {
+        "temps": 21.2,
+        "texte": "Ne les regarde pas"
+      },
+      {
+        "temps": 24.5,
+        "texte": "Tous ceux qui doutent de toi"
+      },
+      {
+        "temps": 29,
+        "texte": "C'est ta chance"
+      },
+      {
+        "temps": 32.5,
+        "texte": "Prends-la maintenant"
+      },
+      {
+        "temps": 38,
+        "texte": "Ils vont te dire"
+      },
+      {
+        "temps": 41.3,
+        "texte": "Que c'est trop dur pour toi"
+      },
+      {
+        "temps": 46.8,
+        "texte": "Qu'il vaut mieux rester"
+      },
+      {
+        "temps": 50.1,
+        "texte": "Dans ce que tu connais déjà"
+      },
+      {
+        "temps": 54.6,
+        "texte": "Mais c'est ta chance"
+      },
+      {
+        "temps": 58.1,
+        "texte": "Ne la laisse pas passer"
+      },
+      {
+        "temps": 64,
+        "texte": "C'est ta chance, c'est maintenant"
+      },
+      {
+        "temps": 69.5,
+        "texte": "Ne regarde pas en arrière"
+      },
+      {
+        "temps": 74,
+        "texte": "C'est ta chance, vas-y, fonce"
+      },
+      {
+        "temps": 79.5,
+        "texte": "Tu n'as rien à perdre"
+      },
+      {
+        "temps": 85,
+        "texte": ""
+      },
+      {
+        "temps": 95.5,
+        "texte": "Ils ne savent pas"
+      },
+      {
+        "temps": 98.8,
+        "texte": "Ce que tu portes en toi"
+      },
+      {
+        "temps": 104.2,
+        "texte": "Cette force qui brûle"
+      },
+      {
+        "temps": 107.5,
+        "texte": "Et qui ne demande qu'à jaillir"
+      },
+      {
+        "temps": 112,
+        "texte": "Alors vas-y"
+      },
+      {
+        "temps": 115.5,
+        "texte": "Montre-leur ce que tu vaux"
+      },
+      {
+        "temps": 121,
+        "texte": "C'est ta chance, c'est maintenant"
+      },
+      {
+        "temps": 126.5,
+        "texte": "Ne regarde pas en arrière"
+      },
+      {
+        "temps": 131,
+        "texte": "C'est ta chance, vas-y, fonce"
+      },
+      {
+        "temps": 136.5,
+        "texte": "Le monde t'appartient"
+      },
+      {
+        "temps": 142,
+        "texte": "Peu importe d'où tu viens"
+      },
+      {
+        "temps": 147.5,
+        "texte": "Peu importe ton passé"
+      },
+      {
+        "temps": 152,
+        "texte": "Ce qui compte, c'est aujourd'hui"
+      },
+      {
+        "temps": 157.5,
+        "texte": "Et tout ce que tu vas devenir"
+      },
+      {
+        "temps": 163,
+        "texte": "C'est ta chance, c'est maintenant"
+      },
+      {
+        "temps": 168.5,
+        "texte": "Ne laisse personne te dire non"
+      },
+      {
+        "temps": 173,
+        "texte": "C'est ta chance, elle est là"
+      },
+      {
+        "temps": 178.5,
+        "texte": "Saisis-la, elle est à toi"
+      },
+      {
+        "temps": 184,
+        "texte": "C'est ta chance..."
+      },
+      {
+        "temps": 189.5,
+        "texte": "C'est maintenant..."
+      },
+      {
+        "temps": 195,
+        "texte": ""
+      }
+    ],
+    "points_grammaire": [
+      {
+        "exemples": [
+          "Écoute-moi ! (écouter → tu)",
+          "Prends ta chance ! (prendre → tu)",
+          "Vas-y ! (aller → tu, exception avec 's')",
+          "Saisissons cette opportunité ! (saisir → nous)",
+          "Foncez ! (foncer → vous)"
+        ],
+        "explication": "Forme verbale pour donner un ordre, un conseil, ou encourager. Formation : radical du présent + terminaisons spécifiques (pas de 's' pour les verbes en -er à la 2e personne)",
+        "niveau": "A2",
+        "point": "L'impératif présent",
+        "usage": "Encourager, conseiller, donner des instructions"
+      },
+      {
+        "exemples": [
+          "Ne les écoute pas",
+          "Ne doute pas de toi",
+          "N'aie pas peur (avoir → impératif irrégulier)",
+          "Ne regarde pas en arrière",
+          "Ne laisse pas passer cette chance"
+        ],
+        "explication": "Pour interdire ou déconseiller : NE + impératif + PAS",
+        "niveau": "A2",
+        "point": "L'impératif négatif",
+        "usage": "Déconseiller, interdire, protéger de mauvaises influences"
+      },
+      {
+        "exemples": [
+          "Prends-la ! (la chance)",
+          "Saisis-la ! (l'opportunité)",
+          "Ne la laisse pas passer",
+          "Ne les écoute pas (les gens qui doutent)",
+          "Montre-leur ce que tu vaux"
+        ],
+        "explication": "À l'impératif affirmatif : VERBE-PRONOM. À l'impératif négatif : NE + PRONOM + VERBE + PAS",
+        "niveau": "B1",
+        "point": "Les pronoms compléments avec l'impératif",
+        "usage": "Précision et fluidité dans les encouragements"
+      }
+    ],
+    "themes": [
+      "encouragement",
+      "résilience",
+      "émancipation sociale",
+      "opportunité",
+      "détermination",
+      "confiance en soi"
+    ],
+    "titre": "C'est ta chance",
+    "video_url": "",
+    "vocabulaire_cle": [
+      {
+        "categorie": "nom",
+        "definition": "Opportunité favorable, occasion à saisir",
+        "exemple": "C'est ta chance de réussir, ne la laisse pas passer",
+        "mot": "chance",
+        "niveau": "A2",
+        "notes": "Ici, 'chance' = opportunité plus que hasard"
+      },
+      {
+        "categorie": "verbe",
+        "definition": "Prêter attention à ce que quelqu'un dit, tenir compte de",
+        "exemple": "Ne les écoute pas quand ils te découragent",
+        "mot": "écouter",
+        "niveau": "A1",
+        "notes": "Forme négative à l'impératif : 'Ne les écoute pas'"
+      },
+      {
+        "categorie": "verbe",
+        "definition": "Ne pas avoir confiance, ne pas croire en",
+        "exemple": "Ceux qui doutent de toi n'ont pas vu ton potentiel",
+        "mot": "douter (de)",
+        "niveau": "B1",
+        "notes": "Construction : douter DE quelqu'un/quelque chose"
+      },
+      {
+        "categorie": "verbe",
+        "definition": "Prendre rapidement, profiter d'une occasion",
+        "exemple": "Saisis cette opportunité avant qu'elle ne disparaisse",
+        "mot": "saisir",
+        "niveau": "B1",
+        "notes": "Métaphore : saisir une chance = la prendre, en profiter"
+      },
+      {
+        "categorie": "verbe",
+        "definition": "Aller de l'avant avec détermination, ne pas hésiter",
+        "exemple": "Vas-y, fonce ! N'aie pas peur",
+        "mot": "foncer",
+        "niveau": "B1",
+        "notes": "Familier, encourageant. Impératif : 'Fonce !'"
+      },
+      {
+        "categorie": "nom",
+        "definition": "Capacité à surmonter les difficultés, à rebondir",
+        "exemple": "Sa résilience lui a permis de réussir malgré les obstacles",
+        "mot": "résilience",
+        "niveau": "B2",
+        "notes": "Concept clé : ne pas se laisser abattre par les échecs"
+      },
+      {
+        "categorie": "nom",
+        "definition": "Libération, affranchissement d'une contrainte sociale",
+        "exemple": "L'éducation est un outil d'émancipation sociale",
+        "mot": "émancipation",
+        "niveau": "B2",
+        "notes": "Thème central : se libérer de son origine sociale"
+      }
+    ]
+  },
+  {
+    "album": "Entre gris clair et gris foncé",
+    "annee": 1987,
+    "artiste": "Jean-Jacques Goldman",
+    "audio_url": "",
+    "collectionId": "pbc_780718777",
+    "collectionName": "chansons",
+    "contexte_culturel": "# Contexte historique et moral\n\n## 1. Leidenstadt : Une ville fictive symbolique\n\nGoldman crée une ville imaginaire **\"Leidenstadt\"** :\n- **\"Leiden\"** (allemand) = souffrance, douleur\n- **\"Stadt\"** = ville\n- Ville fictive représentant TOUTE ville allemande ordinaire ayant participé à la Shoah\n\n## 2. La Shoah et les camps\n\nLa chanson fait référence à la **Shoah** (Holocauste) :\n- Extermination systématique de 6 millions de Juifs (1941-1945)\n- Camps de concentration et d'extermination\n- **Participation active ou passive** de millions d'Allemands ordinaires\n- Question morale : Comment des gens \"normaux\" ont-pu participer ?\n\n## 3. Le personnage : Un Allemand né après-guerre (1947)\n\nLe narrateur est né en **1947** à Leidenstadt :\n- Il n'a **pas vécu** les atrocités\n- Il n'était **pas là**\n- Pourtant, il ressent une **culpabilité** et une **responsabilité**\n\n## 4. Débat philosophique : Culpabilité collective\n\n### Hannah Arendt : \"La banalité du mal\"\n- Les nazis n'étaient pas des \"monstres\" mais des gens ordinaires\n- Le mal peut être commis par des individus \"normaux\" obéissant aux ordres\n- **Question centrale** : Et nous, qu'aurions-nous fait ?\n\n### Emmanuel Levinas : Responsabilité pour autrui\n- Nous sommes **responsables** même de ce que nous n'avons pas fait\n- La responsabilité morale **précède** notre existence individuelle\n- \"Nul n'est innocent\" = nous héritons d'une histoire\n\n### Karl Jaspers : Types de culpabilité\n- **Culpabilité criminelle** : Ceux qui ont commis les crimes\n- **Culpabilité politique** : Le peuple allemand\n- **Culpabilité morale** : Chaque individu face à sa conscience\n- **Culpabilité métaphysique** : Solidarité humaine universelle\n\n## 5. Le refus des excuses\n\nLe narrateur **refuse** les excuses habituelles :\n- \"C'était la guerre\"\n- \"Les temps étaient durs\"\n- \"Ils obéissaient aux ordres\"\n\n**Pourquoi ce refus ?**\n→ Accepter ces excuses = minimiser l'horreur\n→ Préférer **assumer** la culpabilité plutôt que de l'effacer\n\n## 6. La contingence : \"Et si j'étais né là-bas ?\"\n\n**Question existentielle centrale** :\n> \"Si j'étais né en 1917 à Leidenstadt, qu'aurais-je fait ?\"\n\n- Le hasard de la naissance\n- L'humilité morale : ne pas se croire meilleur\n- La conscience que **nous aurions pu être les bourreaux**\n\n## 7. Message universel\n\nAu-delà de la Shoah, Goldman pose une question **universelle** :\n- Rwanda, Srebrenica, Cambodge, etc.\n- **Chaque génocide** pose la même question\n- La responsabilité morale de l'humanité entière\n\n## 8. Style et ton\n\n- **Langage sobre**, presque détaché\n- **Pas de pathos** : Goldman refuse l'émotion facile\n- **Force de la retenue** : les non-dits sont puissants\n- **Respect des victimes** : ne pas s'approprier leur souffrance",
+    "cover_url": "",
+    "duree": 234,
+    "genre": [
+      "chanson française",
+      "pop"
+    ],
+    "id": "y6yl3pyz1qacf5k",
+    "niveau": "B2",
+    "paroles": "<p>\nJe suis né en dix-sept à Leidenstadt<br/>\nA deux heures d'Hambourg et du canal<br/>\nComme tous les miens dans ce pays<br/>\nJ'ai travaillé, j'ai eu des enfants, j'ai tout oublié\n</p>\n\n<p>\nLes prairies ont recouvert les traces<br/>\nEt le soc efface les pas<br/>\nMais dans la maison on entend comme des coups de feu<br/>\nEt c'est comme si quelqu'un criait encore\n</p>\n\n<p>\nJe suis né en dix-sept à Leidenstadt<br/>\nÇa ressemblait à n'importe quelle autre ville<br/>\nMais aujourd'hui quelque chose me rattrape<br/>\nUne honte mêlée de peur, de colère ou je ne sais quoi\n</p>\n\n<p>\nUn jour, j'ai su qu'il y avait eu ça<br/>\nQuelque part ici, je ne sais pas où<br/>\nMais peut-être dans ce jardin qui jouxte notre cour<br/>\nPeut-être ici même où j'ai grandi\n</p>\n\n<p>\nJe crois que nul n'est innocent<br/>\nDe ce qu'il s'est passé là-bas<br/>\nMême si aujourd'hui je n'avais pas trente ans<br/>\nJe suis né en dix-sept à Leidenstadt\n</p>\n\n<p>\nOn dit que c'était une guerre<br/>\nQue les temps étaient durs<br/>\nQu'ils donnaient, qu'ils obéissaient<br/>\nQu'il fallait se taire ou mourir\n</p>\n\n<p>\nMais je ne veux pas qu'on m'explique<br/>\nJe ne veux pas que l'on m'apprenne<br/>\nCette culpabilité que les hommes m'ont léguée<br/>\nJe la prends, je la garde, elle est mienne\n</p>\n\n<p>\nJe suis né en dix-sept à Leidenstadt<br/>\nEt je ne veux absoudre personne<br/>\nJe ne juge pas, mais dans l'odeur d'un soir d'automne<br/>\nIl me semble entendre encore des cris\n</p>",
+    "paroles_synchronisees": [
+      {
+        "id": "l1",
+        "numero": 1,
+        "texte": "Je suis né en dix-sept à Leidenstadt",
+        "timestamp": 12
+      },
+      {
+        "id": "l2",
+        "numero": 2,
+        "texte": "A deux heures d'Hambourg et du canal",
+        "timestamp": 17
+      },
+      {
+        "id": "l3",
+        "numero": 3,
+        "texte": "Comme tous les miens dans ce pays",
+        "timestamp": 22
+      },
+      {
+        "id": "l4",
+        "numero": 4,
+        "texte": "J'ai travaillé, j'ai eu des enfants, j'ai tout oublié",
+        "timestamp": 27
+      },
+      {
+        "id": "l5",
+        "numero": 5,
+        "texte": "",
+        "timestamp": 32
+      },
+      {
+        "id": "l6",
+        "numero": 6,
+        "texte": "Les prairies ont recouvert les traces",
+        "timestamp": 42
+      },
+      {
+        "id": "l7",
+        "numero": 7,
+        "texte": "Et le soc efface les pas",
+        "timestamp": 47
+      },
+      {
+        "id": "l8",
+        "numero": 8,
+        "texte": "Mais dans la maison on entend comme des coups de feu",
+        "timestamp": 52
+      },
+      {
+        "id": "l9",
+        "numero": 9,
+        "texte": "Et c'est comme si quelqu'un criait encore",
+        "timestamp": 59
+      },
+      {
+        "id": "l10",
+        "numero": 10,
+        "texte": "",
+        "timestamp": 64
+      },
+      {
+        "id": "l11",
+        "numero": 11,
+        "texte": "Je suis né en dix-sept à Leidenstadt",
+        "timestamp": 74
+      },
+      {
+        "id": "l12",
+        "numero": 12,
+        "texte": "Ça ressemblait à n'importe quelle autre ville",
+        "timestamp": 79
+      },
+      {
+        "id": "l13",
+        "numero": 13,
+        "texte": "Mais aujourd'hui quelque chose me rattrape",
+        "timestamp": 84
+      },
+      {
+        "id": "l14",
+        "numero": 14,
+        "texte": "Une honte mêlée de peur, de colère ou je ne sais quoi",
+        "timestamp": 90
+      },
+      {
+        "id": "l15",
+        "numero": 15,
+        "texte": "",
+        "timestamp": 95
+      },
+      {
+        "id": "l16",
+        "numero": 16,
+        "texte": "Un jour, j'ai su qu'il y avait eu ça",
+        "timestamp": 105
+      },
+      {
+        "id": "l17",
+        "numero": 17,
+        "texte": "Quelque part ici, je ne sais pas où",
+        "timestamp": 110
+      },
+      {
+        "id": "l18",
+        "numero": 18,
+        "texte": "Mais peut-être dans ce jardin qui jouxte notre cour",
+        "timestamp": 115
+      },
+      {
+        "id": "l19",
+        "numero": 19,
+        "texte": "Peut-être ici même où j'ai grandi",
+        "timestamp": 122
+      },
+      {
+        "id": "l20",
+        "numero": 20,
+        "texte": "",
+        "timestamp": 127
+      },
+      {
+        "id": "l21",
+        "numero": 21,
+        "texte": "Je crois que nul n'est innocent",
+        "timestamp": 137
+      },
+      {
+        "id": "l22",
+        "numero": 22,
+        "texte": "De ce qu'il s'est passé là-bas",
+        "timestamp": 142
+      },
+      {
+        "id": "l23",
+        "numero": 23,
+        "texte": "Même si aujourd'hui je n'avais pas trente ans",
+        "timestamp": 147
+      },
+      {
+        "id": "l24",
+        "numero": 24,
+        "texte": "Je suis né en dix-sept à Leidenstadt",
+        "timestamp": 153
+      },
+      {
+        "id": "l25",
+        "numero": 25,
+        "texte": "",
+        "timestamp": 158
+      },
+      {
+        "id": "l26",
+        "numero": 26,
+        "texte": "On dit que c'était une guerre",
+        "timestamp": 168
+      },
+      {
+        "id": "l27",
+        "numero": 27,
+        "texte": "Que les temps étaient durs",
+        "timestamp": 172
+      },
+      {
+        "id": "l28",
+        "numero": 28,
+        "texte": "Qu'ils donnaient, qu'ils obéissaient",
+        "timestamp": 176
+      },
+      {
+        "id": "l29",
+        "numero": 29,
+        "texte": "Qu'il fallait se taire ou mourir",
+        "timestamp": 181
+      },
+      {
+        "id": "l30",
+        "numero": 30,
+        "texte": "",
+        "timestamp": 186
+      },
+      {
+        "id": "l31",
+        "numero": 31,
+        "texte": "Mais je ne veux pas qu'on m'explique",
+        "timestamp": 191
+      },
+      {
+        "id": "l32",
+        "numero": 32,
+        "texte": "Je ne veux pas que l'on m'apprenne",
+        "timestamp": 196
+      },
+      {
+        "id": "l33",
+        "numero": 33,
+        "texte": "Cette culpabilité que les hommes m'ont léguée",
+        "timestamp": 201
+      },
+      {
+        "id": "l34",
+        "numero": 34,
+        "texte": "Je la prends, je la garde, elle est mienne",
+        "timestamp": 207
+      },
+      {
+        "id": "l35",
+        "numero": 35,
+        "texte": "",
+        "timestamp": 212
+      },
+      {
+        "id": "l36",
+        "numero": 36,
+        "texte": "Je suis né en dix-sept à Leidenstadt",
+        "timestamp": 217
+      },
+      {
+        "id": "l37",
+        "numero": 37,
+        "texte": "Et je ne veux absoudre personne",
+        "timestamp": 222
+      },
+      {
+        "id": "l38",
+        "numero": 38,
+        "texte": "Je ne juge pas, mais dans l'odeur d'un soir d'automne",
+        "timestamp": 227
+      },
+      {
+        "id": "l39",
+        "numero": 39,
+        "texte": "Il me semble entendre encore des cris",
+        "timestamp": 232
+      }
+    ],
+    "points_grammaire": [
+      "Le conditionnel passé : 'j'aurais pu', 'auraient dû' (hypothèses irréelles sur le passé)",
+      "Le subjonctif imparfait (langage soutenu) : 'Il fallait que...'",
+      "La négation : 'je ne veux pas que...', 'nul n'est innocent' (forme soutenue de 'personne')"
+    ],
+    "themes": [
+      "responsabilité morale",
+      "contingence",
+      "histoire",
+      "Shoah",
+      "humilité",
+      "empathie",
+      "condition humaine",
+      "hasard de la naissance",
+      "culpabilité collective"
+    ],
+    "titre": "Né en 17 à Leidenstadt",
+    "video_url": "",
+    "vocabulaire_cle": {
+      "Leidenstadt": "Ville fictive allemande (de 'Leiden' = souffrance). Goldman crée un lieu symbolique.",
+      "absoudre": "Pardonner, déclarer innocent (terme religieux/juridique).",
+      "culpabilité": "Sentiment d'être coupable. Responsabilité morale transmise.",
+      "innocent": "Non coupable. Question morale centrale : peut-on être innocent du passé ?",
+      "jouxte": "Être très proche de, être contigu à. Langage soutenu.",
+      "le soc": "Partie de la charrue qui laboure la terre. Métaphore de l'oubli qui 'efface' l'histoire.",
+      "léguer": "Transmettre par héritage. La culpabilité comme héritage historique.",
+      "rattraper": "Rejoindre, atteindre quelqu'un qui avançait. Ici : le passé qui revient."
+    }
+  },
+  {
+    "album": "Non homologué",
+    "annee": 1985,
+    "artiste": "Jean-Jacques Goldman",
+    "audio_url": "",
+    "collectionId": "pbc_780718777",
+    "collectionName": "chansons",
+    "contexte_culturel": "# Le Coureur - Contexte\n\n## Récit de déracinement\n\n\"Le coureur\" raconte l'histoire d'un jeune athlète africain repéré par un recruteur occidental. Le récit suit 7 étapes :\n\n1. **Vie d'origine** : Plage, alizés, course pieds nus\n2. **Découverte** : Le recruteur avec son chronomètre\n3. **Transaction** : Dollars contre signature des parents\n4. **Transplantation** : Voyage en avion vers les villes froides\n5. **Déshumanisation** : Tests médicaux, corps-objet\n6. **Transformation** : Numéro sur le dos, compétition\n7. **Bilan** : \"Étranger partout\", ambivalence\n\n## Question centrale\n\nLa mondialisation est-elle émancipation ou aliénation ?\n\n## Métaphore clé\n\n- AVANT : \"Je la caressais naguère\" (tendresse)\n- APRÈS : \"Des clous aux pieds pour écorcher la terre\" (violence)\n\n## Contexte post-colonial\n\nGoldman évoque le recrutement des talents du Sud par le Nord, la marchandisation du corps, la perte d'identité.",
+    "cover_url": "",
+    "duree": 270,
+    "genre": [
+      "variété française",
+      "chanson à texte",
+      "chanson sociale"
+    ],
+    "id": "nfui0t9sgv8jog3",
+    "niveau": "B2",
+    "paroles": "Je courais sur la plage abritée des alizés\nPieds nus comme couraient mes ancêtres\nJe courais après les vagues\nEt la pluie qui me mouillait\nEt j'avais un vieux compte à régler\n\nLà-bas il y a du sable et de l'or et des alizés\nJe la caressais naguère\nCette terre\n\nOh j'ai bien vu derrière ses lunettes\nUn type avec un chronomètre\nMa mère une larme, un murmure\nDes dollars et leur signature\n\nJ'ai pris le grand avion blanc du lundi\nLoin du sable et des alizés\nJ'suis arrivé dans le froid des villes\nVenu d'où les touristes s'en vont\n\nOn m'a touché, mesuré comme on fait d'un cheval\nSur un tapis, toujours courir\nPlein d'électrodes\nPissé dans un bocal\nEt ça faisait mal\n\nOn m'a mis un numéro sur le dos\nDes cris, des drapeaux\nJ'cours toujours en rond dans c't'espèce d'enclos\nPerdre, gagner à quoi ça rime\nLes autres coureurs au lieu des vagues\nLe béton gris des capitales\n\nDes clous aux pieds pour écorcher la terre\nDes clous aux pieds pour écorcher la terre\n\nJ'suis étranger partout aujourd'hui\nLe hasard a croisé ma vie\nÉtait-ce un mal, un bien\nC'est ainsi",
+    "paroles_synchronisees": [
+      {
+        "temps": 0,
+        "texte": ""
+      },
+      {
+        "temps": 12,
+        "texte": "Je courais sur la plage abritée des alizés"
+      },
+      {
+        "temps": 18,
+        "texte": "Pieds nus comme couraient mes ancêtres"
+      },
+      {
+        "temps": 24,
+        "texte": "Je courais après les vagues"
+      },
+      {
+        "temps": 28,
+        "texte": "Et la pluie qui me mouillait"
+      },
+      {
+        "temps": 32,
+        "texte": "Et j'avais un vieux compte à régler"
+      },
+      {
+        "temps": 40,
+        "texte": ""
+      },
+      {
+        "temps": 48,
+        "texte": "Là-bas il y a du sable et de l'or et des alizés"
+      },
+      {
+        "temps": 56,
+        "texte": "Je la caressais naguère"
+      },
+      {
+        "temps": 62,
+        "texte": "Cette terre"
+      },
+      {
+        "temps": 70,
+        "texte": ""
+      },
+      {
+        "temps": 78,
+        "texte": "Oh j'ai bien vu derrière ses lunettes"
+      },
+      {
+        "temps": 84,
+        "texte": "Un type avec un chronomètre"
+      },
+      {
+        "temps": 90,
+        "texte": "Ma mère une larme, un murmure"
+      },
+      {
+        "temps": 96,
+        "texte": "Des dollars et leur signature"
+      },
+      {
+        "temps": 105,
+        "texte": ""
+      },
+      {
+        "temps": 112,
+        "texte": "J'ai pris le grand avion blanc du lundi"
+      },
+      {
+        "temps": 118,
+        "texte": "Loin du sable et des alizés"
+      },
+      {
+        "temps": 124,
+        "texte": "J'suis arrivé dans le froid des villes"
+      },
+      {
+        "temps": 130,
+        "texte": "Venu d'où les touristes s'en vont"
+      },
+      {
+        "temps": 140,
+        "texte": ""
+      },
+      {
+        "temps": 148,
+        "texte": "On m'a touché, mesuré comme on fait d'un cheval"
+      },
+      {
+        "temps": 156,
+        "texte": "Sur un tapis, toujours courir"
+      },
+      {
+        "temps": 162,
+        "texte": "Plein d'électrodes"
+      },
+      {
+        "temps": 166,
+        "texte": "Pissé dans un bocal"
+      },
+      {
+        "temps": 170,
+        "texte": "Et ça faisait mal"
+      },
+      {
+        "temps": 180,
+        "texte": ""
+      },
+      {
+        "temps": 188,
+        "texte": "On m'a mis un numéro sur le dos"
+      },
+      {
+        "temps": 194,
+        "texte": "Des cris, des drapeaux"
+      },
+      {
+        "temps": 200,
+        "texte": "J'cours toujours en rond dans c't'espèce d'enclos"
+      },
+      {
+        "temps": 208,
+        "texte": "Perdre, gagner à quoi ça rime"
+      },
+      {
+        "temps": 214,
+        "texte": "Les autres coureurs au lieu des vagues"
+      },
+      {
+        "temps": 220,
+        "texte": "Le béton gris des capitales"
+      },
+      {
+        "temps": 230,
+        "texte": ""
+      },
+      {
+        "temps": 238,
+        "texte": "Des clous aux pieds pour écorcher la terre"
+      },
+      {
+        "temps": 246,
+        "texte": "Des clous aux pieds pour écorcher la terre"
+      },
+      {
+        "temps": 256,
+        "texte": ""
+      },
+      {
+        "temps": 262,
+        "texte": "J'suis étranger partout aujourd'hui"
+      },
+      {
+        "temps": 268,
+        "texte": "Le hasard a croisé ma vie"
+      },
+      {
+        "temps": 274,
+        "texte": "Était-ce un mal, un bien"
+      },
+      {
+        "temps": 280,
+        "texte": "C'est ainsi"
+      }
+    ],
+    "points_grammaire": [
+      {
+        "exemples": [
+          "Je courais",
+          "Je caressais"
+        ],
+        "explication": "Description du passé habituel (vie d'origine)",
+        "niveau": "A2",
+        "point": "Imparfait",
+        "usage": "Évoquer le passé révolu"
+      },
+      {
+        "exemples": [
+          "J'ai pris l'avion",
+          "On m'a mis un numéro"
+        ],
+        "explication": "Événements ponctuels (rupture)",
+        "niveau": "A2",
+        "point": "Passé composé",
+        "usage": "Marquer les moments de transformation"
+      },
+      {
+        "exemples": [
+          "On m'a touché",
+          "On m'a mesuré"
+        ],
+        "explication": "Sujet subit l'action (déshumanisation)",
+        "niveau": "B1",
+        "point": "Voix passive",
+        "usage": "Montrer que le sujet n'a pas le contrôle"
+      }
+    ],
+    "themes": [
+      "déracinement",
+      "mondialisation",
+      "identité",
+      "post-colonialisme",
+      "ambivalence"
+    ],
+    "titre": "Le coureur",
+    "video_url": "",
+    "vocabulaire_cle": [
+      {
+        "categorie": "nom",
+        "definition": "Vents réguliers des régions tropicales",
+        "exemple": "Je courais sur la plage abritée des alizés",
+        "mot": "alizés",
+        "niveau": "B2"
+      },
+      {
+        "categorie": "nom",
+        "definition": "Personnes dont on descend",
+        "exemple": "Pieds nus comme couraient mes ancêtres",
+        "mot": "ancêtres",
+        "niveau": "A2"
+      },
+      {
+        "categorie": "verbe",
+        "definition": "Toucher doucement avec tendresse",
+        "exemple": "Je la caressais naguère (la terre)",
+        "mot": "caresser",
+        "niveau": "A2"
+      },
+      {
+        "categorie": "verbe",
+        "definition": "Blesser en arrachant la peau",
+        "exemple": "Des clous aux pieds pour écorcher la terre",
+        "mot": "écorcher",
+        "niveau": "B1"
+      },
+      {
+        "categorie": "adverbe",
+        "definition": "Autrefois (registre soutenu)",
+        "exemple": "Je la caressais naguère",
+        "mot": "naguère",
+        "niveau": "B2"
+      },
+      {
+        "categorie": "nom/adj",
+        "definition": "Qui n'est pas chez soi",
+        "exemple": "J'suis étranger partout aujourd'hui",
+        "mot": "étranger",
+        "niveau": "A2"
+      }
+    ]
+  }
+]

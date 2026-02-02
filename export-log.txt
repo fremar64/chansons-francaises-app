@@ -1,0 +1,34 @@
+[dotenv@17.2.3] injecting env (15) from .env.local -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+🚀 Starting PocketBase export...
+📍 PocketBase URL: https://pocketbase-songs.ceredis.net
+🔐 Authenticating as admin@ceredis.net...
+✅ Authentication successful!
+
+
+📦 Exporting users...
+✅ Exported 1 records from users
+
+📦 Exporting chansons...
+✅ Exported 4 records from chansons
+
+📦 Exporting seances...
+✅ Exported 27 records from seances
+
+📦 Exporting evidences...
+✅ Exported 0 records from evidences
+
+📦 Exporting progression...
+✅ Exported 0 records from progression
+
+📦 Exporting competences...
+✅ Exported 0 records from competences
+
+📦 Exporting evaluations_competences...
+✅ Exported 0 records from evaluations_competences
+
+📦 Exporting reponses...
+✅ Exported 0 records from reponses
+
+✨ Export complete!
+📁 Files saved to: /home/ceredis/chansons-francaises-app/exports
+📊 Total records: 32

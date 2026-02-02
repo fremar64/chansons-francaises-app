@@ -1,7 +1,15 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { pb, User, login as pbLogin, logout as pbLogout, register as pbRegister, refreshAuth, loginWithOAuth2 } from '@/lib/pocketbase';
+import { createClient } from '@/lib/supabase/client';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import type { Database } from '@/types/supabase';
+
+// Type User basé sur le schéma Supabase profiles
+export type User = Database['public']['Tables']['profiles']['Row'] & {
+  niveau_actuel?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+  langueMaternelle?: string;
+};
 
 interface AuthContextType {
   user: User | null;
@@ -14,7 +22,7 @@ interface AuthContextType {
   updateUser: (user: User) => void;
 }
 
-interface RegisterData {
+export interface RegisterData {
   email: string;
   password: string;
   passwordConfirm: string;
@@ -30,19 +38,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     const initAuth = async () => {
       try {
-        if (pb.authStore.isValid) {
-          const refreshedUser = await refreshAuth();
-          setUser(refreshedUser);
-        } else if (pb.authStore.model) {
-          setUser(pb.authStore.model as unknown as User);
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          // Récupérer le profil depuis la table profiles
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profile) {
+            setUser({
+              ...profile, // Spread tous les champs de la table profiles
+              niveau_actuel: (session.user.user_metadata?.niveau || 'A2') as User['niveau_actuel'],
+              langueMaternelle: session.user.user_metadata?.langue_maternelle,
+            });
+          }
         }
       } catch (error) {
         console.error('Erreur initialisation authentification:', error);
-        try { pb.authStore.clear(); } catch {};
       } finally {
         setIsLoading(false);
       }
@@ -50,74 +70,167 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initAuth();
 
-    const unsubscribe = pb.authStore.onChange((_, model) => {
-      setUser(model as User | null);
+    // Écouter les changements de session Supabase
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profile) {
+          setUser({
+            ...profile,
+            niveau_actuel: (session.user.user_metadata?.niveau || 'A2') as User['niveau_actuel'],
+            langueMaternelle: session.user.user_metadata?.langue_maternelle,
+          });
+        }
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+      }
     });
 
     return () => {
-      unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const loggedInUser = await pbLogin(email, password);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      if (!pb.authStore.isValid) {
-        await refreshAuth();
-        if (!pb.authStore.isValid) {
-          throw new Error('Authentification invalide : le token n\'a pas été conservé.');
-        }
-      }
+      if (error) throw error;
+      if (!data.session) throw new Error('Aucune session créée');
 
-      if (loggedInUser.role !== 'admin' && !loggedInUser.isValidated) {
-        try { pb.authStore.clear(); } catch {};
-        throw new Error("Votre compte n'a pas encore été validé par un administrateur.");
-      }
+      // Récupérer le profil
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profileError) throw profileError;
+      if (!profile) throw new Error('Profil utilisateur introuvable');
+
+      const loggedInUser: User = {
+        ...profile,
+        niveau_actuel: (data.user.user_metadata?.niveau || 'A2') as User['niveau_actuel'],
+        langueMaternelle: data.user.user_metadata?.langue_maternelle,
+      };
 
       setUser(loggedInUser);
       return loggedInUser;
     } catch (err) {
+      console.error('Login error:', err);
       throw err;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   const loginWithProvider = useCallback(async (provider: 'google' | 'github' | 'discord') => {
     setIsLoading(true);
     try {
-      const loggedInUser = await loginWithOAuth2(provider);
-      setUser(loggedInUser);
+      // TODO: Configurer OAuth providers dans Supabase Dashboard
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: provider as 'google' | 'github',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+      
+      if (error) throw error;
+    } catch (err) {
+      console.error('OAuth error:', err);
+      throw err;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   const register = useCallback(async (data: RegisterData) => {
     setIsLoading(true);
     try {
-      const newUser = await pbRegister(
-        data.email,
-        data.password,
-        data.passwordConfirm,
-        data.username,
-        data.name,
-        data.niveau,
-        data.langueMaternelle,
-        data.role
-      );
+      // Vérifier si un admin existe déjà (si role = admin)
+      if (data.role === 'admin') {
+        const { data: admins } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('role', 'admin')
+          .limit(1);
+        
+        if (admins && admins.length > 0) {
+          throw new Error('Un compte administrateur existe déjà');
+        }
+      }
+
+      // Créer le compte Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            niveau: data.niveau || 'A2',
+            langue_maternelle: data.langueMaternelle,
+          },
+        },
+      });
+
+      if (authError) throw authError;
+      if (!authData.user) throw new Error('Échec création utilisateur');
+
+      // Créer le profil dans la table profiles
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: authData.user.id,
+          email: data.email,
+          username: data.username,
+          name: data.name,
+          role: data.role,
+        });
+
+      if (profileError) {
+        // Si échec création profil, supprimer le user Supabase (idéalement via admin API)
+        console.error('Échec création profil:', profileError);
+        throw new Error('Échec création du profil utilisateur');
+      }
+
+      // Récupérer le profil créé avec tous les champs (created_at, updated_at, metadata, etc.)
+      const { data: createdProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authData.user.id)
+        .single();
+
+      if (!createdProfile) {
+        throw new Error('Profil créé mais introuvable');
+      }
+
+      const newUser: User = {
+        ...createdProfile,
+        niveau_actuel: data.niveau || 'A2',
+        langueMaternelle: data.langueMaternelle,
+      };
+
       setUser(newUser);
+    } catch (err) {
+      console.error('Register error:', err);
+      throw err;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
-  const logout = useCallback(() => {
-    pbLogout();
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut();
     setUser(null);
-  }, []);
+  }, [supabase]);
 
   const updateUser = useCallback((updatedUser: User) => {
     setUser(updatedUser);
@@ -181,15 +294,22 @@ export function useUserStats() {
       }
 
       try {
-        const progressions = await pb.collection('progression').getList(1, 1000, {
-          filter: `user = "${user.id}"`,
-        });
+        const supabase = createClient();
+        const { data: activities } = await supabase
+          .from('activities')
+          .select('*')
+          .eq('user_id', user.id);
 
-        const seancesTerminees = progressions.items.filter(p => p.statut === 'termine').length;
-        const seancesEnCours = progressions.items.filter(p => p.statut === 'en_cours').length;
-        const scoreTotal = progressions.items.reduce((sum, p) => sum + (p.score_total || 0), 0);
+        if (!activities) {
+          setIsLoading(false);
+          return;
+        }
+
+        const seancesTerminees = activities.filter(a => a.completed).length;
+        const seancesEnCours = activities.filter(a => !a.completed).length;
+        const scoreTotal = activities.reduce((sum, a) => sum + (a.score_total || 0), 0);
         const tempsTotalMinutes = Math.round(
-          progressions.items.reduce((sum, p) => sum + (p.temps_passe || 0), 0) / 60
+          activities.reduce((sum, a) => sum + (a.time_spent || 0), 0) / 60
         );
 
         const serieJours = seancesTerminees > 0 ? 1 : 0;

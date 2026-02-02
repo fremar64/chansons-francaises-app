@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { pb } from "@/lib/pocketbase";
+import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +14,7 @@ interface User {
   username: string;
   name: string;
   role: string;
-  isValidated: boolean;
+  is_validated: boolean;
 }
 
 export default function AdminUserValidationPage() {
@@ -24,6 +24,7 @@ export default function AdminUserValidationPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     if (!authLoading) {
@@ -39,11 +40,15 @@ export default function AdminUserValidationPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await pb.collection("users").getFullList<User>({
-        filter: "isValidated = false",
-        sort: "-created"
-      });
-      setUsers(result);
+      const { data, error: queryError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("is_validated", false)
+        .order("created_at", { ascending: false });
+
+      if (queryError) throw queryError;
+      
+      setUsers((data || []) as User[]);
     } catch {
       setError("Erreur lors du chargement des utilisateurs.");
     } finally {
@@ -52,14 +57,23 @@ export default function AdminUserValidationPage() {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (user && user.role === 'admin') {
+      fetchUsers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const handleValidate = async (userId: string) => {
     setError(null);
     setSuccess(null);
     try {
-      await pb.collection("users").update(userId, { isValidated: true });
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ is_validated: true })
+        .eq("id", userId);
+
+      if (updateError) throw updateError;
+
       setSuccess("Utilisateur validé avec succès.");
       setUsers((prev) => prev.filter((u) => u.id !== userId));
     } catch {
