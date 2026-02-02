@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User, Book } from "lucide-react";
+import { CeredisScoreCard } from "@/components/dashboard/CeredisScoreCard";
+import { DomainRadarChart } from "@/components/dashboard/DomainRadarChart";
+import { CompetencyGrid } from "@/components/dashboard/CompetencyGrid";
 import { RadarCompetences } from "@/components/dashboard/RadarCompetences";
 import { HistoriqueActivites } from "@/components/dashboard/HistoriqueActivites";
 import { ProgressionGlobale } from "@/components/dashboard/ProgressionGlobale";
@@ -29,8 +32,29 @@ function DashboardContent() {
           </div>
         ) : (
           <>
-            {/* Section Profil et Parcours */}
+            {/* SECTION 1 : Vue d'ensemble */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              
+              {/* Carte Score CEREDIS - SEULEMENT si score disponible et > 0 */}
+              {stats.scoreCeredis !== null && stats.scoreCeredis > 0 && (
+                <CeredisScoreCard 
+                  score={{
+                    userId: user?.id || '',
+                    ceredisScore: stats.scoreCeredis,
+                    cecrlLevel: (stats.niveauCecrl || 'A2') as 'A2' | 'B1' | 'B2' | 'C1',
+                    domainScores: stats.domainesScores,
+                    competencyScores: {},
+                    validation: { 
+                      valid: true, 
+                      level: (stats.niveauCecrl || 'A2') as 'A2' | 'B1' | 'B2' | 'C1',
+                      errors: [], 
+                      warnings: [] 
+                    },
+                    computedAt: new Date().toISOString(),
+                    engineVersion: '1.0'
+                  }}
+                />
+              )}
               {/* Carte Profil */}
               <Card>
                 <CardHeader>
@@ -135,7 +159,7 @@ function DashboardContent() {
               </Card>
             </div>
 
-            {/* Section Progression Globale - version complète */}
+            {/* SECTION 2 : Progression globale */}
             <ProgressionGlobale
               seancesTerminees={stats.seancesTerminees}
               seancesEnCours={stats.seancesEnCours}
@@ -146,10 +170,10 @@ function DashboardContent() {
               tendance={stats.tendance}
             />
 
-            {/* Section Analyses */}
+            {/* SECTION 3 : Analyses détaillées */}
             <div className="grid gap-6 lg:grid-cols-2">
-              {/* Radar des Compétences */}
-              <RadarCompetences domainesScores={stats.domainesScores} />
+              {/* Radar 5 domaines (Recharts professionnel) */}
+              <DomainRadarChart domainScores={stats.domainesScores} />
 
               {/* Historique des Activités */}
               <HistoriqueActivites activites={stats.dernieresActivites} />
