@@ -9,7 +9,40 @@
 **Données migrées** : 1 admin + 4 chansons + 27 séances  
 **Types TypeScript** : Générés manuellement (Supabase auto-hébergé)  
 **Build** : ✅ **RÉUSSI** (production-ready)  
-**Status** : ✅ **PRODUCTION-READY** (prêt pour tests et pilote Avril 2026)
+**Status local** : ✅ Authentification fonctionne sur localhost:3000  
+**Status production** : ⏳ En attente configuration Vercel
+
+---
+
+### 🚀 2 février — Configuration Vercel (en cours)
+
+**Problème détecté** :
+- ✅ Authentification fonctionne en local (localhost:3000)
+- ❌ Authentification échoue sur production (enaa-chansons.ceredis.net)
+- ❌ Build Vercel échoue : `@supabase/ssr: Your project's URL and API key are required`
+
+**Cause** : Variables d'environnement non configurées sur Vercel (`.env.local` n'est pas déployé).
+
+**Solution créée** :
+1. ✅ **VERCEL_DEPLOY_GUIDE.md** — Guide complet de configuration Vercel
+2. ✅ **scripts/show-vercel-env.sh** — Script pour afficher les variables à copier
+
+**Variables à configurer sur Vercel** (12 au total) :
+- **Supabase** (3) : URL, Anon Key, Service Role Key
+- **CaSS** (4) : URL, Username, Password, Framework ID
+- **xAPI** (3) : URL, Username, Password
+- **NextAuth** (2) : Secret, URL
+
+**Étapes de résolution** :
+1. ⏳ Copier les variables dans Vercel Dashboard
+2. ⏳ Redéployer l'application
+3. ⏳ Tester l'authentification sur enaa-chansons.ceredis.net
+4. ⏳ Valider le fonctionnement complet
+
+**Commande utile** :
+```bash
+./scripts/show-vercel-env.sh  # Affiche toutes les variables à copier
+```
 
 ---
 

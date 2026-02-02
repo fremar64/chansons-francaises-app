@@ -1,0 +1,176 @@
+# Guide de déploiement Vercel — Chansons Françaises
+
+## ⚠️ Problème actuel
+
+**Erreur de build** : 
+```
+@supabase/ssr: Your project's URL and API key are required to create a Supabase client!
+```
+
+**Cause** : Les variables d'environnement ne sont pas configurées sur Vercel.
+
+---
+
+## ✅ Solution : Configurer les variables d'environnement
+
+### 1. Accéder aux paramètres Vercel
+
+1. Aller sur https://vercel.com/fremar64/chansons-francaises-app
+2. Cliquer sur **Settings** (⚙️)
+3. Aller dans **Environment Variables** (dans le menu de gauche)
+
+### 2. Ajouter les variables Supabase (OBLIGATOIRES)
+
+| Variable | Valeur | Environnements |
+|----------|--------|----------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://enaa-supabase.ceredis.net` | Production, Preview, Development |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc2ODQxNzQ0MCwiZXhwIjo0OTI0MDkxMDQwLCJyb2xlIjoiYW5vbiJ9.VOHQxObgXJqphcq78kuOTOrrydVzOgioO4Imvg-6bN4` | Production, Preview, Development |
+| `SUPABASE_SERVICE_ROLE_KEY` | `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc2ODQxNzQ0MCwiZXhwIjo0OTI0MDkxMDQwLCJyb2xlIjoic2VydmljZV9yb2xlIn0.bgtN9VWamxjqmbjkcxo3phReUQAprldrx5gbFzcU9mA` | Production uniquement |
+
+⚠️ **Important** : 
+- Ces variables sont déjà publiques dans ton `.env.local` (donc pas de risque à les mettre ici)
+- La `SUPABASE_SERVICE_ROLE_KEY` ne doit être accessible qu'en production (jamais côté client)
+
+### 3. Ajouter les variables CaSS (pour le système de compétences)
+
+| Variable | Valeur | Environnements |
+|----------|--------|----------------|
+| `CASS_URL` | `https://cass.ceredis.net` | Production, Preview, Development |
+| `CASS_USERNAME` | `ceredis` | Production uniquement |
+| `CASS_PASSWORD` | `G(Ato?6kCE&@iRAL` | Production uniquement |
+| `NEXT_PUBLIC_CASS_FRAMEWORK_ID` | `dd5b3a81-c455-471d-9df5-d2f6313ad96e` | Production, Preview, Development |
+
+### 4. Ajouter les variables xAPI (Learning Record Store)
+
+| Variable | Valeur | Environnements |
+|----------|--------|----------------|
+| `XAPI_LRS_URL` | `https://lrs.ceredis.net/xAPI` | Production uniquement |
+| `XAPI_LRS_USERNAME` | `admin` | Production uniquement |
+| `XAPI_LRS_PASSWORD` | `GdSmchz92bNy915cUXmUvxFKa55BpV` | Production uniquement |
+
+### 5. Ajouter NextAuth Secret
+
+| Variable | Valeur | Environnements |
+|----------|--------|----------------|
+| `NEXTAUTH_SECRET` | `G0ouHFLUmi04EwEYhXzc2UkA7lWOiCDJHw7Tcih+2io=` | Production, Preview, Development |
+| `NEXTAUTH_URL` | `https://enaa-chansons.ceredis.net` | Production uniquement |
+| `NEXTAUTH_URL` | `https://[preview-url]` | Preview uniquement |
+
+---
+
+## 📋 Checklist de déploiement
+
+### Étape 1 : Configurer les variables
+- [ ] Variables Supabase (3 variables)
+- [ ] Variables CaSS (4 variables)
+- [ ] Variables xAPI (3 variables)
+- [ ] NextAuth (2 variables)
+
+### Étape 2 : Redéployer
+1. Dans Vercel, aller dans **Deployments**
+2. Cliquer sur le dernier déploiement échoué
+3. Cliquer sur **Redeploy** (bouton en haut à droite)
+4. Cocher "Use existing Build Cache" si disponible
+5. Cliquer sur **Redeploy**
+
+### Étape 3 : Vérifier
+- [ ] Le build passe sans erreur
+- [ ] L'URL https://enaa-chansons.ceredis.net est accessible
+- [ ] La connexion avec admin@ceredis.net fonctionne
+- [ ] Le dashboard s'affiche correctement
+
+---
+
+## 🔍 Diagnostic des erreurs
+
+### Erreur : "Failed to authenticate" (400)
+
+**Symptôme** : L'authentification fonctionne en local mais pas en production.
+
+**Causes possibles** :
+1. ❌ Variables d'environnement manquantes → Solution ci-dessus
+2. ❌ URL Supabase incorrecte → Vérifier `NEXT_PUBLIC_SUPABASE_URL`
+3. ❌ CORS non configuré sur Supabase → Vérifier dans Supabase Dashboard
+
+**Vérification CORS sur Supabase (Coolify)** :
+```bash
+# Se connecter au conteneur Supabase Kong (API Gateway)
+docker exec -it <kong-container> sh
+
+# Vérifier la config Kong (CORS)
+curl http://localhost:8000/_status
+```
+
+Si CORS est le problème, ajouter dans la config Kong :
+```yaml
+cors:
+  origins:
+    - https://enaa-chansons.ceredis.net
+    - http://localhost:3000
+```
+
+### Erreur : Build échoue sur Vercel
+
+**Symptôme** : `@supabase/ssr: Your project's URL and API key are required`
+
+**Solution** : Configurer les variables d'environnement (voir section 2 ci-dessus)
+
+### Erreur : "Invalid token" ou 401
+
+**Cause** : La clé `NEXT_PUBLIC_SUPABASE_ANON_KEY` est incorrecte ou expirée.
+
+**Solution** : Régénérer la clé dans Supabase Dashboard ou vérifier qu'elle correspond à celle dans `.env.local`.
+
+---
+
+## 🎯 Commandes utiles
+
+### Tester en local avec les variables de production
+```bash
+# Créer un fichier .env.production.local
+cp .env.local .env.production.local
+
+# Build en mode production
+npm run build
+
+# Démarrer en mode production
+npm start
+```
+
+### Vérifier les variables d'environnement sur Vercel
+```bash
+# Installer Vercel CLI
+npm i -g vercel
+
+# Lister les variables
+vercel env ls
+
+# Ajouter une variable
+vercel env add NEXT_PUBLIC_SUPABASE_URL production
+```
+
+---
+
+## 📞 Support
+
+Si le problème persiste après configuration :
+
+1. **Vérifier les logs Vercel** : https://vercel.com/fremar64/chansons-francaises-app/deployments
+2. **Vérifier les logs Supabase** : Dashboard Coolify → Supabase → Logs
+3. **Tester l'API Supabase** :
+   ```bash
+   curl https://enaa-supabase.ceredis.net/rest/v1/ \
+     -H "apikey: eyJ0eXAiOiJKV1Qi..."
+   ```
+
+---
+
+## ✅ Status
+
+- [x] Guide créé
+- [ ] Variables configurées sur Vercel
+- [ ] Redéploiement réussi
+- [ ] Authentification fonctionnelle en production
+
+**Date** : 2 février 2026  
+**Dernière mise à jour** : Après migration Supabase
