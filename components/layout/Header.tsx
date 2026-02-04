@@ -35,7 +35,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+        <Link href="/modules/chansons/lycee" className="flex items-center gap-3 transition-opacity hover:opacity-80">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-accent shadow-glow">
             <Music2 className="h-5 w-5 text-primary" />
           </div>
@@ -49,7 +49,7 @@ export function Header() {
 
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-1">
-          <Link href="/">
+          <Link href="/modules/chansons/lycee">
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
               <Music2 className="mr-2 h-4 w-4" />
               Catalogue

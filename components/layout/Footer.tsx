@@ -29,7 +29,7 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Navigation</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/modules/chansons/lycee" className="text-muted-foreground hover:text-foreground transition-colors">
                   Catalogue
                 </Link>
               </li>

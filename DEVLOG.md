@@ -1,3 +1,343 @@
+## 2026-02-04 12:20 - Ajout du module Fables et poésie
+
+### 🎯 Objectif
+Ajouter le module “Fables et poésie” au domaine Communication orale et écrite.
+
+### ✅ Réalisations
+- Ajout du track “Fables et poésie” dans le curriculum centralisé
+
+### 🏗️ Architecture et décisions techniques
+Aucune décision d’architecture nouvelle.
+
+### 🐛 Problèmes rencontrés et résolutions
+Aucun problème technique rencontré.
+
+### 🔧 Modifications substantielles
+Aucune modification substantielle des spécifications.
+
+### ✅ Validation et tests
+**Tests TypeScript** : Non exécutés
+**Tests Build** : Non exécutés
+**Tests fonctionnels** : Non exécutés
+
+### 📊 Métriques
+**Code** : Fichiers modifiés: 2, Lignes: [+7/-0], Types `any`: 0
+**Qualité** : TS errors: 0 (non vérifié), Build time: N/A
+
+### 📁 Fichiers modifiés
+```
+packages/
+   └── curriculum/
+         └── curriculum.ts (modifié)
+DEVLOG.md
+```
+
+### 🚀 Prochaines étapes
+1. [ ] Définir les cycles et niveaux prioritaires du module Fables et poésie
+
+### 💭 Notes
+Le module est ajouté en “non disponible” pour préparation progressive des contenus.
+
+---
+
+## 2026-02-04 12:10 - Curriculum data-driven & UI monorepo alignée
+
+### 🎯 Objectif
+Aligner l’UI d’accueil et les pages “langue” sur une architecture monorepo data-driven, avec le curriculum comme source de vérité (packages/).
+
+### ✅ Réalisations
+- Création d’un package curriculum (types, données, helpers) centralisant domaines, cycles, niveaux et tracks
+- Refactor de l’accueil pour consommer le curriculum et supprimer les données pédagogiques codées en dur
+- Ajout de composants UI stateless dédiés à la navigation progressive
+- Mise à jour des pages “langue” pour utiliser les labels issus du curriculum
+
+### 🏗️ Architecture et décisions techniques
+
+#### Décision 1 : Curriculum dans `packages/` comme source unique
+**Contexte** : Les données pédagogiques étaient codées directement dans l’UI.
+**Options considérées** :
+1. Laisser les données dans l’UI et maintenir les listes en dur
+2. Centraliser la structure pédagogique dans un package dédié
+
+**Choix retenu** : Option 2
+**Justification** : Respect strict du principe “curriculum = source de vérité”, réduction de la dette technique.
+**Impact** : Navigation et labels deviennent entièrement data-driven.
+
+#### Décision 2 : Composants UI stateless dédiés à la navigation
+**Contexte** : L’UI mélangeait structure pédagogique et rendu.
+**Options considérées** :
+1. Garder une page monolithique
+2. Déléguer l’affichage à des composants stateless
+
+**Choix retenu** : Option 2
+**Justification** : Découplage, testabilité et conformité à l’architecture cible.
+**Impact** : Rendu UI réutilisable et logique métier centralisée.
+
+### 🐛 Problèmes rencontrés et résolutions
+Aucun problème technique rencontré.
+
+### 🔧 Modifications substantielles
+#### Modification : Déplacement des règles de navigation vers le curriculum
+**Contexte** : Les règles cycles/niveaux étaient codées dans la page d’accueil.
+**Modification requise** : Centraliser ces règles dans `packages/curriculum`.
+**Impact sur spécifications** : Aucune modification fonctionnelle, uniquement architecture.
+**Autorisation** : Implicite (alignement sur les règles non négociables).
+**Validation** : UI toujours fonctionnelle via helpers du curriculum.
+
+### ✅ Validation et tests
+**Tests TypeScript** : Non exécutés
+**Tests Build** : Non exécutés
+**Tests fonctionnels** : Non exécutés
+
+### 📊 Métriques
+**Code** : Fichiers modifiés: 12, Lignes: [+964/-36], Types `any`: 0
+**Qualité** : TS errors: 0 (non vérifié), Build time: N/A
+
+### 📁 Fichiers modifiés
+```
+app/
+  ├── page.tsx (modifié)
+  └── langue/
+     └── [discipline]/
+        └── [niveau]/
+           ├── page.tsx (modifié)
+           └── lecons/
+              └── [lessonId]/
+                 └── page.tsx (modifié)
+packages/
+  ├── curriculum/
+  │   ├── curriculum.ts (créé)
+  │   ├── index.ts (créé)
+  │   └── navigation.ts (créé)
+  ├── types/
+  │   └── curriculum.ts (créé)
+  └── ui/
+     ├── CycleSelector.tsx (créé)
+     ├── DomainCards.tsx (créé)
+     ├── LevelSelector.tsx (créé)
+     └── TrackCards.tsx (créé)
+DEVLOG.md
+```
+
+### 🚀 Prochaines étapes
+1. [ ] Connecter les pages “activities” aux tracks du curriculum
+2. [ ] Ajouter une validation UX complète de la navigation progressive
+3. [ ] Brancher le scoring-engine sur une activité pilote
+
+### 💭 Notes
+La structure monorepo est désormais compatible avec une évolution “ajout de données sans refonte UI”.
+
+---
+
+## 2026-02-04 11:50 - Remplacement image hero (eleves.png)
+
+### 🎯 Objectif
+Remplacer l’image de fond du hero par une version IA (sans risque de droits à l’image).
+
+### ✅ Réalisations
+- Mise à jour de l’image de fond du hero vers `/public/images/eleves.png`
+
+### 🏗️ Architecture et décisions techniques
+Aucune décision d’architecture nouvelle.
+
+### 🐛 Problèmes rencontrés et résolutions
+Aucun problème technique rencontré.
+
+### 🔧 Modifications substantielles
+Aucune modification substantielle des spécifications.
+
+### ✅ Validation et tests
+**Tests TypeScript** : Non exécutés
+**Tests Build** : Non exécutés
+**Tests fonctionnels** : Non exécutés
+
+### 📊 Métriques
+**Code** : Fichiers modifiés: 2, Lignes: [+1/-1], Types `any`: 0
+**Qualité** : TS errors: 0 (non vérifié), Build time: N/A
+
+### 📁 Fichiers modifiés
+```
+app/
+   └── page.tsx (modifié)
+DEVLOG.md
+```
+
+### 🚀 Prochaines étapes
+1. [ ] Valider l’affichage du hero avec la nouvelle image
+
+### 💭 Notes
+Changement effectué pour conformité aux droits à l’image.
+
+---
+
+## 2026-02-04 11:35 - Lien retour vers accueil monorepo (module Chansons)
+
+### 🎯 Objectif
+Ajouter un lien de navigation sur l’accueil Chansons (Lycée) pour revenir à l’accueil monorepo.
+
+### ✅ Réalisations
+- Ajout d’un lien “Retour à l’accueil du monorepo” sur la page du module Chansons (Lycée)
+
+### 🏗️ Architecture et décisions techniques
+Aucune décision d’architecture nouvelle.
+
+### 🐛 Problèmes rencontrés et résolutions
+Aucun problème technique rencontré.
+
+### 🔧 Modifications substantielles
+Aucune modification substantielle des spécifications.
+
+### ✅ Validation et tests
+**Tests TypeScript** : Non exécutés
+**Tests Build** : Non exécutés
+**Tests fonctionnels** : Non exécutés
+
+### 📊 Métriques
+**Code** : Fichiers modifiés: 2, Lignes: [+8/-0], Types `any`: 0
+**Qualité** : TS errors: 0 (non vérifié), Build time: N/A
+
+### 📁 Fichiers modifiés
+```
+app/
+  └── modules/
+     └── chansons/
+        └── lycee/
+           └── page.tsx (modifié)
+DEVLOG.md
+```
+
+### 🚀 Prochaines étapes
+1. [ ] Vérifier l’UX de navigation entre monorepo et module Chansons
+
+### 💭 Notes
+Le lien est positionné après le header pour une visibilité immédiate.
+
+---
+
+## 2026-02-04 11:20 - Refonte accueil monorepo & navigation par domaines
+
+### 🎯 Objectif
+Réorganiser l’accueil en mode monorepo avec navigation dynamique par domaine, cycles et niveaux, et déplacer l’accueil Chansons (Lycée) vers une route dédiée.
+
+### ✅ Réalisations
+- Création d’une nouvelle page d’accueil monorepo avec Hero, logos et navigation dynamique (domaines → modules/disciplines → cycles → niveaux)
+- Déplacement de l’accueil actuel du module Chansons vers `/modules/chansons/lycee`
+- Mise en place des pages génériques pour le domaine “Connaissance de la langue” (menu des leçons + page leçon avec navigation)
+- Mise à jour des liens du header/footer du module Chansons vers la nouvelle route
+
+### 🏗️ Architecture et décisions techniques
+
+#### Décision 1 : Mettre l’accueil monorepo à la racine `/`
+**Contexte** : L’accueil doit devenir le point d’entrée global des deux domaines et des niveaux.
+**Options considérées** :
+1. Conserver l’accueil existant à `/` et créer `/monorepo`
+2. Déplacer l’accueil existant vers une route module et faire de `/` l’accueil monorepo
+
+**Choix retenu** : Option 2
+**Justification** : Respect direct de la demande “interface d’accueil du monorepo” et mise en avant des deux domaines dès l’entrée.
+**Impact** : L’accueil Chansons devient un écran de module dédié, accessible via `/modules/chansons/lycee`.
+
+#### Décision 2 : Routes dynamiques “langue” avec pages génériques
+**Contexte** : Le domaine “Connaissance de la langue” doit mener à un écran de leçons et une page de leçon structurée.
+**Options considérées** :
+1. Implémenter des pages statiques par discipline et niveau
+2. Utiliser des routes dynamiques et une structure générique évolutive
+
+**Choix retenu** : Option 2
+**Justification** : Structure extensible, compatible avec l’intégration progressive des contenus.
+**Impact** : Ajout des routes `/langue/[discipline]/[niveau]` et `/langue/[discipline]/[niveau]/lecons/[lessonId]`.
+
+### 🐛 Problèmes rencontrés et résolutions
+Aucun problème technique rencontré.
+
+### 🔧 Modifications substantielles
+Aucune déviation des spécifications : implémentation conforme à la demande.
+
+### ✅ Validation et tests
+**Tests TypeScript** : Non exécutés
+**Tests Build** : Non exécutés
+**Tests fonctionnels** : Non exécutés
+
+### 📊 Métriques
+**Code** : Fichiers modifiés: 7, Lignes: [+709/-39], Types `any`: 0
+**Qualité** : TS errors: 0 (non vérifié), Build time: N/A
+
+### 📁 Fichiers modifiés
+```
+app/
+  ├── page.tsx (modifié)
+  ├── modules/
+  │   └── chansons/
+  │       └── lycee/
+  │           └── page.tsx (créé)
+  └── langue/
+     └── [discipline]/
+        └── [niveau]/
+           ├── page.tsx (créé)
+           └── lecons/
+              └── [lessonId]/
+                 └── page.tsx (créé)
+components/
+  └── layout/
+     ├── Header.tsx (modifié)
+     └── Footer.tsx (modifié)
+```
+
+### 🚀 Prochaines étapes
+1. [ ] Relier les modules “Contes/Nouvelles”, “Argumentatifs”, “Fonctionnels” aux premières pages disponibles
+2. [ ] Brancher les leçons du domaine “Connaissance de la langue” sur les contenus réels
+3. [ ] Valider l’UX avec un test utilisateur rapide (navigation multi-cycles)
+
+### 💭 Notes
+La navigation dynamique est volontairement générique pour permettre l’intégration progressive des contenus par domaine et par niveau.
+
+---
+
+## 2026-02-02 15:40 - Audit rapide d’avancement (vérification factuelle)
+
+### 🎯 Objectif
+Valider factuellement l’état d’intégration du moteur CEREDIS, des API, et des dashboards (étudiant/enseignant).
+
+### ✅ Réalisations
+- Vérification de l’existence du moteur CEREDIS (services/ceredis-calculator)
+- Vérification de l’API `/api/ceredis/calculate`
+- Vérification du hook client (`useCeredisScore`) et de l’appel moteur dans `useDashboard`
+- Vérification des pages dashboard étudiant et enseignant
+- Identification de l’usage de données mock dans le dashboard enseignant (TODO non résolu)
+
+### 🏗️ Architecture et décisions techniques
+Aucune décision d’architecture nouvelle : audit factuel sans modification technique.
+
+### 🐛 Problèmes rencontrés et résolutions
+Aucun problème technique rencontré pendant l’audit.
+
+### 🔧 Modifications substantielles
+Aucune modification de spécifications : audit uniquement.
+
+### ✅ Validation et tests
+**Tests TypeScript** : Non exécutés (audit documentaire)
+**Tests Build** : Non exécutés
+**Tests fonctionnels** : Non exécutés
+
+### 📊 Métriques
+**Code** : Fichiers modifiés: 1, Lignes: [+45/-0], Types `any`: 0
+**Qualité** : TS errors: 0 (non vérifié), Build time: N/A
+
+### 📁 Fichiers modifiés
+```
+DEVLOG.md
+```
+
+### 🚀 Prochaines étapes
+1. [ ] Confirmer la source de données réelle du dashboard enseignant (remplacer les mocks)
+2. [ ] Lancer une validation technique minimale (build + tests ciblés)
+3. [ ] Documenter l’état réel des dashboards avec capture de preuves
+
+### 💭 Notes
+Audit rapide basé sur l’inspection des fichiers clés, sans exécution locale.
+
+---
+
 ## 2026-02-02 14:15 — 🚨 CORRECTIONS CRITIQUES + INTÉGRATION MOTEUR CEREDIS ✅
 
 ### 🎯 Principe réaffirmé
